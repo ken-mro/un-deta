@@ -140,3 +140,8 @@
 - やったこと: `tests/unit/privacy.test.js`（必須見出し、個人情報・記録データを一切収集しない、ブラウザのストレージのみ、アナリティクス・Cookie・外部送信なし、GitHub のアクセスログと公式ポリシーへのリンク（rel=noopener noreferrer）、機種変更・削除時、ken_mro・{{CONTACT}}・制定日、外部は <a href> のみ。Red 8件）→ 本文を作成し Green（ユニット127件・E2E 116件）
 - 判断: GitHub の一般プライバシー ステートメント（日本語版 URL）が有効なことを web-fetch で確認（2026年4月27日版）。SW キャッシュに記録データは含まれない旨も明記。iOS の保存場所分離にも言及
 - 申し送り: 次は HUMAN_TODO.md
+
+## 2026-11-26 タスク4-3: HUMAN_TODO.md
+- やったこと: `tests/unit/human-todo.test.js`（{{CONTACT}} を含む全配布ファイルが列挙されていること、主要確認事項。Red）→ `HUMAN_TODO.md` を作成して Green（ユニット129件）
+- 判断: 公開前必須（{{CONTACT}} 差し替え＋sw.js VERSION 更新、規約・ポリシーの専門家確認：合意管轄・免責・制定日）、実機確認、GitHub Pages 公開、依存保守（pnpm audit/outdated、pnpm 12 検討、loop.sh の扱い）に分類
+- 申し送り: 次は「規約・ポリシーの記述と実装の整合を確認するテスト」
