@@ -35,9 +35,25 @@ function render() {
   $('btn-clear-today').hidden = status === STATUS.NONE;
 }
 
+// 押下時の演出（見た目だけ。読み上げは状態テキストで行う）
+let celebrationTimer;
+function celebrate(status) {
+  const fx = document.querySelector('[data-testid="celebration"]');
+  fx.querySelector('.celebration-text').textContent = status === STATUS.DONE ? 'すっきり！' : 'また明日〜';
+  fx.classList.toggle('is-quiet', status !== STATUS.DONE);
+  fx.hidden = true;
+  void fx.offsetWidth; // アニメーションを最初から再生し直す
+  fx.hidden = false;
+  clearTimeout(celebrationTimer);
+  celebrationTimer = setTimeout(() => {
+    fx.hidden = true;
+  }, 1500);
+}
+
 function record(status) {
   persist({ ...state, records: setStatus(state.records, todayKey(), status) });
   render();
+  celebrate(status);
 }
 
 $('btn-done').addEventListener('click', () => record(STATUS.DONE));

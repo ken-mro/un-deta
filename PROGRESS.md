@@ -64,3 +64,8 @@
 - やったこと: `tests/e2e/home.spec.js`（6件×2ブラウザ、Red: 404）→ `index.html` / `src/styles.css` / `src/app.js` で Green（E2E 16件 pass）
 - 判断: page.clock で日付固定。ボタンは aria-pressed で状態を表現、状態テキストは role=status。今日の記録の取り消しボタンを用意。保存失敗時は role=alert で通知。CSP メタタグ（default-src 'self'、inline script/style なし）。visibilitychange で日付跨ぎに追従。起動時に requestPersist()
 - 申し送り: 状態テキストは textContent で設定。data-testid="today" / "today-status" を E2E が使用
+
+## 2026-11-26 タスク2-2: 押下時の演出
+- やったこと: `tests/e2e/feedback.spec.js`（4件×2、Red）→ ポップ表示「すっきり！」＋粒の飛散（出てない は「また明日〜」で粒なし）を CSS アニメーションで実装（E2E 24件 pass）
+- 判断: 演出要素は aria-hidden（読み上げは状態テキスト）。1.5秒で非表示、連打時はタイマーを張り直してアニメを再生し直す。prefers-reduced-motion: reduce では全アニメーション・トランジションを無効化し、文言だけ静的に表示
+- 申し送り: 新しいアニメーションを足すときも reduced-motion の一括無効化に乗る（!important）
