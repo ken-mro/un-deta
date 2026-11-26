@@ -740,7 +740,8 @@ button {
 .calendar-weekdays,
 .calendar-grid {
   display: grid;
-  grid-template-columns: repeat(7, minmax(2.75rem, 1fr));
+  /* 狭い画面でもはみ出さないよう、列は画面幅に合わせて7等分する（最小幅を固定しない） */
+  grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: 4px;
 }
 
@@ -757,7 +758,9 @@ button {
 
 .cal-day {
   position: relative;
+  min-width: 0;
   min-height: 2.9rem;
+  padding: 0;
   border: none;
   border-radius: 10px;
   background: var(--secondary);

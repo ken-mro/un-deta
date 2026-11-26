@@ -230,3 +230,7 @@
 - やったこと: calendar.spec にキーボード操作（roving tabindex、矢印 ±1/±7 日、未来へは移動しない、月の境目で隣の月へ、PageUp/PageDown、1/31→2/29 の丸め）、a11y.spec にタップ領域（マス・月移動ボタン 44px 以上）、dark-mode.spec にカレンダー文字のコントラストを追加 → calendar-view.js に実装。月末丸めの不具合（存在しない日付で例外）をテストで先に再現してから修正
 - README・HUMAN_TODO を更新。`bash scripts/verify.sh` → VERIFY: PASS（ユニット148件・E2E 184件）
 - 公開サイトへの反映は人間の `git push` が必要
+
+## 2026-11-26 不具合修正: 狭い画面でカレンダーの右側が切れる
+- 原因: カレンダーの列を minmax(2.75rem, 1fr) にしていたため、7列＋隙間で約332px必要で、幅 344px（Galaxy Z Fold5 のカバー画面など）以下ではみ出していた
+- やったこと: `tests/e2e/narrow-layout.spec.js`（幅 320/344/360/375px でカレンダー・曜日・月移動ボタン・各マスが画面内、ページの横スクロールなし）で 320/344 の失敗を再現 → 列を minmax(0, 1fr) にして Green。高さ 2.9rem は維持。sw.js VERSION=5
