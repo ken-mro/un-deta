@@ -211,3 +211,8 @@
 - SPEC.md は設定で編集不可のため、PLAN 6章を反映した `SPEC.updated.md` を作成（人間が SPEC.md に置き換える）
 - 規約の再点検: 「規約の変更」を民法548条の4（定型約款の変更: 変更の旨・内容・効力発生日の事前周知、利益適合性または合理性）に沿う文言に修正（テスト追加）。sw.js VERSION=3
 - GitHub に公開リポジトリ ken-mro/un-deta を作成（push は設定で禁止のため人間が実施）。追跡ファイルの秘密情報スキャン済み
+
+## 2026-11-26 公開完了
+- 人間が SPEC.md を置き換えて push（2467269）。エージェントが `gh api` で GitHub Pages（main / root）を有効化し、ビルド成功
+- 公開 URL https://ken-mro.github.io/un-deta/ をブラウザで確認: 起動、365日のヒートマップ、SW スコープ /un-deta/ で activated・制御下、外部リクエスト0件、manifest・アイコン5種・terms・privacy が 200（問い合わせ先 mailto あり、{{CONTACT}} なし、SW VERSION=3）、記録→再読み込みで保持→取り消し（確認後に記録は削除）
+- human-todo テストを「SPEC 反映済み」に更新。残りの HUMAN_TODO: 規約・ポリシーの専門家確認、実機確認、依存の保守

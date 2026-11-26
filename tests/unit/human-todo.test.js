@@ -12,9 +12,11 @@ test('問い合わせ先は差し替え済み: 配布ファイルに {{CONTACT}}
   assert.match(todo, /^- \[x\] .*問い合わせ先.*差し替え/m);
 });
 
-test('SPEC.md の更新（仕様変更）を人間に依頼している', () => {
-  assert.match(todo, /^- \[ \] .*SPEC\.md/m);
-  assert.match(todo, /「出た」だけ/);
+test('SPEC.md は仕様変更（「出た」だけ）を反映済みで、HUMAN_TODO でも完了になっている', () => {
+  const spec = readFileSync(new URL('SPEC.md', root), 'utf8');
+  assert.match(spec, /記録項目は「出た」のみ/);
+  assert.doesNotMatch(spec, /\{\{CONTACT\}\}/);
+  assert.match(todo, /^- \[x\] .*SPEC\.md/m);
 });
 
 test('チェックボックス形式で、主要な確認事項を含む', () => {

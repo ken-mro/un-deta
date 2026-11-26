@@ -5,7 +5,7 @@
 ## 公開前に必須
 - [x] **問い合わせ先の差し替え**（2026-11-26 済み: ユーザー指定の bacon.dev.6396@gmail.com を `terms.html`・`privacy.html` に mailto リンクで掲載、`sw.js` の `VERSION` も更新）
   - 公開ページにメールアドレスが載るため、迷惑メールが増える可能性があります。気になる場合は問い合わせフォーム等への変更を検討してください
-- [ ] **SPEC.md の更新**（仕様変更: 記録するのは「出た」だけ）。エージェントは設定により SPEC.md を編集できないため、反映済みの `SPEC.updated.md` を用意しました。`mv SPEC.updated.md SPEC.md` で置き換えてコミットしてください
+- [x] **SPEC.md の更新**（仕様変更: 記録するのは「出た」だけ）。2026-11-26 人間が `SPEC.updated.md` で置き換えてコミット済み（2467269）
   - 「記録項目は『出た／出てない』の2択」→「記録項目は『出た』だけ（出たときに1タップ）」
   - 機能2「未記録／出た／出てない の3値」→「未記録／出た の2値」
   - 機能3「『出てない』の連続日数」→「前回の『出た』から N日」
@@ -31,9 +31,9 @@
 
 ## 公開（GitHub Pages）
 - [x] GitHub にリポジトリ `ken-mro/un-deta`（公開）を作成（2026-11-26 エージェントが `gh repo create` で作成、中身は空）
-- [ ] push（プロジェクト設定で `git push` / `git remote` がエージェントに禁止されているため人間が実施）: `git remote add origin https://github.com/ken-mro/un-deta.git` → `git push -u origin main`
-- [ ] Pages を有効化（Settings → Pages で main / root、または `gh api -X POST repos/ken-mro/un-deta/pages -f "source[branch]=main" -f "source[path]=/"`）。push 後に頼まれればエージェントが実行・公開確認できる
-- [ ] 公開 URL で動作確認（サブパス配信はローカルの E2E で検証済み）
+- [x] push（2026-11-26 人間が実施。以後もエージェントは push しないので、ローカルのコミットは人間が `git push` する）
+- [x] Pages を有効化（2026-11-26 エージェントが `gh api` で main / root に設定、ビルド成功）
+- [x] 公開 URL で動作確認（2026-11-26 エージェントがブラウザで確認: 起動、365日のヒートマップ、SW スコープ /un-deta/ で有効、外部リクエスト0件、manifest・アイコン・規約・ポリシー 200、記録・再読み込み後の保持・取り消し）
 
 ## 依存パッケージ・開発環境の保守
 - [ ] 依存は `@playwright/test`（開発用のみ、3パッケージ）だけ。定期的に `pnpm audit` と `pnpm outdated` を確認し、更新は人間が行う（`.npmrc` / `pnpm-workspace.yaml` で公開7日未満の版の解決やインストールスクリプトを禁止済み）
