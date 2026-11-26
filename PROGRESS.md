@@ -130,3 +130,8 @@
 - やったこと: `tests/unit/serve-base.test.js`（5件、Red）→ `scripts/serve.mjs` に `base` オプション（`--base /un-deta/`）を追加して Green。`tests/e2e/subpath.spec.js`（3件×2）はテスト内で startServer({ base }) を起動して検証（E2E 116件 pass）
 - 判断: base 外は 404（絶対パスの混入を検出できる）、末尾スラッシュなしは 301 で base へ。E2E では全レスポンスが /un-deta/ 配下かつ 400 未満であること、manifest の start_url/scope/icons、SW スコープとオフライン起動、フッターリンクと「アプリに戻る」を確認。既存の相対パス設計のため E2E は初回から pass
 - 申し送り: Playwright 設定は変更なし（webServer は 1 つのまま）。次は PLAN 4（terms.html の本文）
+
+## 2026-11-26 タスク4-1: terms.html
+- やったこと: `tests/unit/terms.test.js`（必須見出し、医療機器でない・診断治療を目的としない・医療機関へ相談、データ消失を含む無保証・免責、日本法、ken_mro・{{CONTACT}}・制定日、効能表現なし、共通 CSS・CSP・外部読み込みなし。Red 6件）→ 本文を作成して Green（ユニット118件・E2E 116件）
+- 判断: 消費者契約法を踏まえ免責に「故意・重大な過失の場合は除く」を明記。合意管轄は「運営者の所在地を管轄する裁判所」（要人間確認）。末尾の「アプリに戻る」は既存 E2E と名前が重複するため置かない。制定日 2026年11月26日
+- 申し送り: HUMAN_TODO.md に {{CONTACT}} の差し替え、合意管轄・規約全体の専門家確認を書くこと
