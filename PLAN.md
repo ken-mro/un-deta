@@ -32,7 +32,7 @@
 - [x] 「データはこの端末の中だけに保存されます」表示、フッターに規約・ポリシーへのリンク
 
 ## 3. PWA
-- [ ] manifest.webmanifest、アイコン一式（SVG から生成した PNG を同梱）、apple-touch-icon、theme-color
+- [x] manifest.webmanifest、アイコン一式（SVG から生成した PNG を同梱）、apple-touch-icon、theme-color
 - [ ] service worker: 全アセット（terms.html / privacy.html 含む）をプリキャッシュ。E2E でオフライン時も起動・記録できることを確認
 - [ ] サブパス（/un-deta/）配信でも動くことを E2E で確認（serve.mjs をサブパス対応にしてテスト）
 

@@ -115,3 +115,8 @@
 - やったこと: `tests/e2e/footer.spec.js`（2件×2、Red）→ ヘッダーに「データはこの端末の中だけに保存されます。どこにも送信しません。」、フッター（contentinfo）に ./terms.html・./privacy.html への相対リンクと運営者 ken_mro を追加（E2E 102件 pass）。UI フェーズ完了
 - 判断: 「どこにも送信しません」と書いたので、PLAN 5 の外部リクエスト検知 E2E で必ず担保する。terms.html / privacy.html はまだ無い（PLAN 4 で作成）
 - 申し送り: 次は PWA（manifest・アイコン・service worker）。アイコン PNG は依存なしで生成する必要あり（node の zlib で PNG を書く等）
+
+## 2026-11-26 タスク3-1: manifest・アイコン・theme-color
+- やったこと: `tests/unit/pwa-manifest.test.js`（manifest の必須項目・相対パス、PNG 実寸を IHDR で確認、SVG がパスのみ、index.html の link/meta。Red）と `tests/e2e/pwa-assets.spec.js` → `manifest.webmanifest`、`icons/`（icon.svg・icon-maskable.svg と PNG 5種）、`scripts/build-icons.mjs`、index.html の head で Green（ユニット101件・E2E 104件）
+- 判断: アイコンはソフトクリーム型に顔（パスと図形のみ、フォント非依存）。PNG は開発依存の Playwright Chromium で SVG から生成（依存追加なし）。apple-touch-icon は全面塗り（iOS が角丸にする）。theme-color はライト #fbf8f3／ダーク #1b1714、manifest は start_url/scope とも ./
+- 申し送り: アイコンを変えたら `node scripts/build-icons.mjs` で再生成。次は service worker（全アセットのプリキャッシュ、terms/privacy 含む）
