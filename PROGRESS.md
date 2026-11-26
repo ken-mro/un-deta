@@ -105,3 +105,8 @@
 - やったこと: `tests/e2e/backup-reminder.spec.js`（5件×2、Red）→ ホーム上部に「バックアップしておく？」節（バックアップする／あとで）を追加し、render() で shouldRemindBackup により表示切替（E2E 92件 pass）
 - 判断: 「バックアップする」はコピーボタンへスクロール＆フォーカス（reduced-motion では smooth スクロールしない）。「あとで」で dismissedKey=今日を保存。コピー成功で lastBackupKey が更新され自動で消える。文言はバックアップ未実施／30日経過で出し分け
 - 申し送り: 次はダークモード。色はすべて :root の CSS 変数に寄せてあるので、prefers-color-scheme: dark で上書きする
+
+## 2026-11-26 タスク2-10: ダークモード
+- やったこと: `tests/e2e/dark-mode.spec.js`（OS 設定への追従＋ライト／ダーク両方で主要15要素のコントラスト比 4.5:1 以上をページ内で計算。Red）→ `prefers-color-scheme: dark` で :root の CSS 変数を上書き（E2E 98件 pass）
+- 判断: color-scheme: light dark（フォーム部品も追従）。色のハードコードを変数化（--border, --warn-*, --cell-*）。ダークのアクセントは明るい橙に暗い文字。QR は常に白地に黒のまま
+- 申し送り: 警告バナーと催促が両方出ると「出た」ボタンが下がる。最終レビューで配置を検討してもよい

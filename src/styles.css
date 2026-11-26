@@ -9,8 +9,35 @@
   --secondary-text: #3d342d;
   --focus: #1f6feb;
   --danger: #a3261b;
+  --border: #cfc5b6;
+  --cell-none: #e6dfd3;
+  --cell-not-yet: #6d7f99;
+  --warn-bg: #fff3d6;
+  --warn-text: #4a3500;
+  --warn-border: #e8c66a;
   --radius: 16px;
-  color-scheme: light;
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1b1714;
+    --surface: #2a231d;
+    --text: #f2ebe3;
+    --text-muted: #c4b8aa;
+    --accent: #d99455;
+    --accent-text: #1b1714;
+    --secondary: #3a3029;
+    --secondary-text: #f2ebe3;
+    --focus: #7ab0ff;
+    --danger: #ff8f80;
+    --border: #5c4f44;
+    --warn-bg: #3a2f12;
+    --warn-text: #f6e4b4;
+    --warn-border: #8a6d1f;
+    --cell-none: #3a3029;
+    --cell-not-yet: #a3b6d1;
+  }
 }
 
 *,
@@ -249,8 +276,6 @@ button {
 :root {
   --cell: 14px;
   --cell-gap: 3px;
-  --cell-none: #e6dfd3;
-  --cell-not-yet: #6d7f99;
 }
 
 .history {
@@ -402,9 +427,9 @@ button {
   margin-top: 1rem;
   padding: 0.9rem 1rem;
   border-radius: var(--radius);
-  background: var(--warn-bg, #fff3d6);
-  color: var(--warn-text, #4a3500);
-  border: 1px solid var(--warn-border, #e8c66a);
+  background: var(--warn-bg);
+  color: var(--warn-text);
+  border: 1px solid var(--warn-border);
   font-size: 0.92rem;
 }
 
@@ -460,7 +485,7 @@ button {
   display: block;
   width: 100%;
   padding: 0.6rem 0.75rem;
-  border: 1px solid var(--border, #cfc5b6);
+  border: 1px solid var(--border);
   border-radius: 10px;
   background: var(--surface);
   color: var(--text);
@@ -486,7 +511,7 @@ button {
 .btn-secondary {
   min-height: 2.75rem;
   padding: 0.4rem 1.25rem;
-  border: 1px solid var(--border, #cfc5b6);
+  border: 1px solid var(--border);
   border-radius: 999px;
   background: var(--secondary);
   color: var(--secondary-text);
@@ -500,7 +525,7 @@ button {
   border: none;
   border-radius: 999px;
   background: var(--danger);
-  color: #fff;
+  color: var(--bg);
   font-weight: 700;
 }
 
