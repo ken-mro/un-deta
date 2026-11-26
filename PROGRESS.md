@@ -44,3 +44,8 @@
 - やったこと: `tests/unit/import-merge.test.js`（7件、Red）→ `src/lib/import-merge.js`（overwriteRecords / analyzeImport / mergeRecords）で Green
 - 判断: 衝突＝両方に記録があり値が異なる日。統合は `preferIncoming` の指定が必須（未指定は TypeError＝確認を飛ばせない）。未記録は相手の記録を消さない。analyzeImport で added / same / conflicts / onlyCurrent を返し、UI の確認ダイアログに使う
 - 申し送り: UI では「上書き」選択時に onlyCurrent 件数が消えることを明示して確認するとよい
+
+## 2026-11-26 タスク1-6: バックアップ催促の判定
+- やったこと: `tests/unit/backup-reminder.test.js`（7件、Red）→ `src/lib/backup-reminder.js` の `shouldRemindBackup({ records, lastBackupKey, dismissedKey, todayKey })` で Green
+- 判断: 記録0件なら出さない。起点は「最後のバックアップ日（未実施なら最初の記録日）」と「あとで で閉じた日」の新しい方で、30日以上で表示。保存値が壊れていたら未実施扱い。時計が戻った（起点が未来）場合は出さない
+- 申し送り: UI ではコピー成功時に lastBackupKey、催促を閉じたときに dismissedKey を保存する
