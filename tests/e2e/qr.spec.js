@@ -6,7 +6,7 @@ import { encodeQR, qrToSvgPath } from '../../src/lib/qr.js';
 
 test.beforeEach(async ({ page }) => fixToday(page));
 
-const RECORDS = { '2024-03-01': 1, '2024-03-02': 2, '2024-03-05': 1 };
+const RECORDS = { '2024-03-01': 1, '2024-03-02': 1, '2024-03-05': 1 };
 
 test('バックアップ文字列と同じ内容の QR コードを表示する', async ({ page }) => {
   await seed(page, { records: RECORDS });

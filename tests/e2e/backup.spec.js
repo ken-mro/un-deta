@@ -10,8 +10,9 @@ const exportBox = (page) => section(page).getByLabel('バックアップ用の�
 const importBox = (page) => section(page).getByLabel('バックアップの文字列を貼り付け');
 const importDialog = (page) => page.getByRole('dialog', { name: 'バックアップの読み込み' });
 
-const CURRENT = { '2024-03-01': 1, '2024-03-02': 1, '2024-03-03': 2 };
-const INCOMING = { '2024-03-02': 2, '2024-02-20': 1 }; // 03-02 が衝突、02-20 が追加
+// 仕様変更により記録は「出た」(1) だけ
+const CURRENT = { '2024-03-01': 1, '2024-03-02': 1, '2024-03-03': 1 };
+const INCOMING = { '2024-02-20': 1, '2024-03-05': 1 };
 
 test('今の記録のバックアップ文字列が表示され、記録すると更新される', async ({ page }) => {
   await seed(page, { records: CURRENT });
@@ -85,27 +86,38 @@ test('統合（衝突なし）: 両方の記録が残る', async ({ page }) => {
   expect((await readSaved(page)).records).toEqual({ ...CURRENT, '2024-02-20': 1 });
 });
 
-test('統合（衝突あり）: 読み込む側を優先するか確認する — 読み込む側を優先', async ({ page }) => {
+test('統合: 衝突は起きないので確認なしで合わさる（今の記録も残る）', async ({ page }) => {
   await seed(page, { records: CURRENT });
   await page.goto('/');
   await importBox(page).fill(encodeBackup(INCOMING));
   await section(page).getByRole('button', { name: '読み込む' }).click();
   const dialog = importDialog(page);
+  await expect(dialog).toContainText('新しく増える日 2日');
   await dialog.getByRole('button', { name: '統合する' }).click();
-  await expect(dialog).toContainText('記録が違う日が 1日 あります');
-  await dialog.getByRole('button', { name: '読み込む側を優先' }).click();
   await expect(dialog).toBeHidden();
   expect((await readSaved(page)).records).toEqual({ ...CURRENT, ...INCOMING });
 });
 
-test('統合（衝突あり）: 今の記録を優先', async ({ page }) => {
+test('読み込むデータに含まれる「出てない」（旧形式の記録）は未記録として無視する', async ({ page }) => {
   await seed(page, { records: CURRENT });
   await page.goto('/');
-  await importBox(page).fill(encodeBackup(INCOMING));
+  // 03-02 は今の記録が「出た」、読み込み側が「出てない」→ 今の記録が残る
+  await importBox(page).fill(encodeBackup({ '2024-02-20': 1, '2024-02-21': 2, '2024-03-02': 2 }));
   await section(page).getByRole('button', { name: '読み込む' }).click();
-  await importDialog(page).getByRole('button', { name: '統合する' }).click();
-  await importDialog(page).getByRole('button', { name: '今の記録を優先' }).click();
-  expect((await readSaved(page)).records).toEqual({ ...INCOMING, ...CURRENT });
+  const dialog = importDialog(page);
+  await expect(dialog).toContainText('読み込む記録: 1日分');
+  await dialog.getByRole('button', { name: '統合する' }).click();
+  await expect(dialog).toBeHidden();
+  expect((await readSaved(page)).records).toEqual({ ...CURRENT, '2024-02-20': 1 });
+});
+
+test('上書きでも「出てない」は取り込まない', async ({ page }) => {
+  await page.goto('/');
+  await importBox(page).fill(encodeBackup({ '2024-02-20': 1, '2024-02-21': 2 }));
+  await section(page).getByRole('button', { name: '読み込む' }).click();
+  await importDialog(page).getByRole('button', { name: '上書きする' }).click();
+  await expect(importDialog(page)).toBeHidden();
+  expect((await readSaved(page)).records).toEqual({ '2024-02-20': 1 });
 });
 
 test('やめる: 何も変わらない', async ({ page }) => {

@@ -193,3 +193,8 @@
 - やったこと: heatmap.spec を先に更新（旧データの 2 は未記録表示、ダイアログに「出てない」がない、「出た」記録で日数表示が更新、凡例は2つ）、a11y / policy-consistency / no-external のダイアログ操作を「出た」に → index.html・heatmap-view・app.js・CSS から「出てない」を除去して Green
 - 判断: 「出てない」用の枠線スタイルと --cell-not-yet を削除。ボタン用クラス .btn-not-yet は読み込みダイアログでも使うため .btn-pill に改名
 - 申し送り: backup / qr の E2E が残り（次のタスク）
+
+## 2026-11-26 仕様変更6-4: バックアップ読み込み
+- やったこと: backup.spec を先に更新（データは「出た」のみ、統合は確認なしで合わさる、読み込みデータ中の「出てない」は統合・上書きとも無視）、qr.spec のデータも更新 → backup-view で decode 結果を onlyDone で正規化、衝突確認ステップ（HTML・JS）を撤去して Green（ユニット136件・E2E 156件）
+- 判断: サマリは「読み込む記録 N日分（新しく増える日・すでに記録がある日）」。import-merge.js の衝突処理（preferIncoming 必須）は汎用ロジックとして残す
+- 申し送り: 次は規約・ポリシー・README の更新と問い合わせ先の差し替え
