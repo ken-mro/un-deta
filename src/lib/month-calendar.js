@@ -1,7 +1,7 @@
 // 月のカレンダーの組み立て（純粋関数）。日曜始まりの週の行に、その月の日付を並べる。
 import { addDays, isValidDateKey } from './date.js';
 import { dayOfWeek } from './heatmap.js';
-import { STATUS } from './records.js';
+import { STATUS, isRecorded } from './records.js';
 
 const MONTH_RE = /^(\d{4})-(\d{2})$/;
 const pad = (n, w = 2) => String(n).padStart(w, '0');
@@ -26,7 +26,7 @@ export function addMonths(monthKey, n) {
 }
 
 /**
- * @returns {{ year: number, month: number, weeks: Array<Array<{date: string, day: number, status: number, isToday: boolean, isFuture: boolean} | null>>, doneCount: number, canGoPrev: boolean, canGoNext: boolean }}
+ * @returns {{ year: number, month: number, weeks: Array<Array<{date: string, day: number, status: number, isToday: boolean, isFuture: boolean} | null>>, doneCount: number, littleCount: number, canGoPrev: boolean, canGoNext: boolean }}
  */
 export function buildMonthCalendar(records, monthKey, todayKey) {
   if (!isValidMonthKey(monthKey)) throw new RangeError(`不正な月キーです: ${String(monthKey)}`);
@@ -37,11 +37,13 @@ export function buildMonthCalendar(records, monthKey, todayKey) {
 
   const cells = [...new Array(dayOfWeek(first)).fill(null)];
   let doneCount = 0;
+  let littleCount = 0;
   for (const date of days) {
-    // 仕様変更により「出た」だけを記録する（旧データの「出てない」は未記録として扱う）
-    const status = records[date] === STATUS.DONE ? STATUS.DONE : STATUS.NONE;
+    // 「出た」「ちょっと出た」以外（旧データの「出てない」など）は未記録として扱う
+    const status = isRecorded(records[date]) ? records[date] : STATUS.NONE;
     const isFuture = date > todayKey;
     if (status === STATUS.DONE && !isFuture) doneCount += 1;
+    if (status === STATUS.LITTLE && !isFuture) littleCount += 1;
     cells.push({ date, day: Number(date.slice(8)), status, isToday: date === todayKey, isFuture });
   }
   while (cells.length % 7 !== 0) cells.push(null);
@@ -49,5 +51,5 @@ export function buildMonthCalendar(records, monthKey, todayKey) {
   for (let i = 0; i < cells.length; i += 7) weeks.push(cells.slice(i, i + 7));
 
   const [year, month] = monthKey.split('-').map(Number);
-  return { year, month, weeks, doneCount, canGoPrev: true, canGoNext: monthKey < monthOf(todayKey) };
+  return { year, month, weeks, doneCount, littleCount, canGoPrev: true, canGoNext: monthKey < monthOf(todayKey) };
 }

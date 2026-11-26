@@ -1,6 +1,6 @@
 // ヒートマップのレイアウト（純粋関数）。週ごとの列（日曜始まり）に直近1年を並べる。
 import { addDays, diffDays, isValidDateKey } from './date.js';
-import { getStatus } from './records.js';
+import { STATUS, getStatus, isRecorded } from './records.js';
 
 export const HEATMAP_DAYS = 365;
 
@@ -26,7 +26,9 @@ export function buildHeatmap(records, todayKey) {
         col.push(null);
         continue;
       }
-      col.push({ date, status: getStatus(records, date) });
+      const raw = getStatus(records, date);
+      // 旧データの「出てない」は未記録として扱う
+      col.push({ date, status: isRecorded(raw) ? raw : STATUS.NONE });
       if (date.endsWith('-01')) label = `${Number(date.slice(5, 7))}月`;
     }
     weeks.push(col);

@@ -87,12 +87,17 @@ test('未知のバージョンは別エラー', () => {
   expectError('AAAA', 'UNKNOWN_VERSION');
 });
 
-test('ありえない状態値（2bit=3）は MALFORMED', () => {
-  // 開始日 0 日目（1970-01-01）に 3 を入れた不正データを自前で組み立てる
+test('2bit=3 は「ちょっと出た」として読める（形式 v1 のまま）', () => {
+  // 開始日 0 日目（1970-01-01）に 3 を入れたデータを自前で組み立てる
   const bytes = [0, 0, 0, 0b11];
   const crc = crc8(bytes);
   const b64 = Buffer.from([...bytes, crc]).toString('base64url');
-  expectError('1' + b64, 'MALFORMED');
+  assert.deepEqual(decodeBackup('1' + b64), { '1970-01-01': STATUS.LITTLE });
+});
+
+test('ちょっと出た を含む記録の往復', () => {
+  const r = build([['2024-01-01', DONE], ['2024-01-02', STATUS.LITTLE], ['2024-01-05', STATUS.LITTLE]]);
+  assert.deepEqual(roundTrip(r), { ...r });
 });
 
 test('極端に長い入力は処理せず弾く', () => {
@@ -101,7 +106,7 @@ test('極端に長い入力は処理せず弾く', () => {
 
 test('エンコード前の記録に不正なものがあれば例外', () => {
   assert.throws(() => encodeBackup({ '1969-12-31': DONE }), RangeError);
-  assert.throws(() => encodeBackup({ '2024-01-01': 3 }), RangeError);
+  assert.throws(() => encodeBackup({ '2024-01-01': 4 }), RangeError);
 });
 
 // テスト用 CRC-8（多項式 0x07）

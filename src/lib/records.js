@@ -1,10 +1,13 @@
 // 記録ストア（純粋関数・不変）。記録は { 'YYYY-MM-DD': 1 | 2 } の形で持ち、未記録の日はキー自体を持たない。
 import { isValidDateKey } from './date.js';
 
-/** 状態値。バックアップの 2bit 値と同じ */
-export const STATUS = Object.freeze({ NONE: 0, DONE: 1, NOT_YET: 2 });
+/** 状態値。バックアップの 2bit 値と同じ（NOT_YET は旧仕様の「出てない」で、読み込み時は未記録として扱う） */
+export const STATUS = Object.freeze({ NONE: 0, DONE: 1, NOT_YET: 2, LITTLE: 3 });
 
-export const isValidStatus = (s) => s === STATUS.NONE || s === STATUS.DONE || s === STATUS.NOT_YET;
+export const isValidStatus = (s) => s === STATUS.NONE || s === STATUS.DONE || s === STATUS.NOT_YET || s === STATUS.LITTLE;
+
+/** 記録として扱う値（「出た」「ちょっと出た」） */
+export const isRecorded = (s) => s === STATUS.DONE || s === STATUS.LITTLE;
 
 function assertKey(key) {
   if (!isValidDateKey(key)) throw new RangeError(`不正な日付キーです: ${String(key)}`);
@@ -34,9 +37,9 @@ export function clearStatus(records, key) {
 /** 記録済み（出た／出てない）の日数 */
 export const countRecords = (records) => Object.keys(records).length;
 
-/** 「出た」だけを残す（仕様変更により「出てない」は記録しない。旧データ・読み込みデータは未記録として扱う） */
-export function onlyDone(records) {
+/** 「出た」「ちょっと出た」だけを残す（旧仕様の「出てない」は未記録として扱う） */
+export function normalizeRecords(records) {
   const out = {};
-  for (const k of Object.keys(records)) if (records[k] === STATUS.DONE) out[k] = STATUS.DONE;
+  for (const k of Object.keys(records)) if (isRecorded(records[k])) out[k] = records[k];
   return Object.freeze(out);
 }

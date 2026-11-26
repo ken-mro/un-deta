@@ -240,3 +240,7 @@
 - やったこと: heatmap.spec を「表示専用」に書き直し（ボタンなし・押してもダイアログが開かない・フォーカスされない・cursor が pointer でない・読み上げは「直近1年で『出た』日: N日」・カレンダーへの案内）。ヒートマップ経由の修正テストはカレンダー側（キャンセル、今日のマス）と a11y のキーボード修正（カレンダー経由）に移した。Red → heatmap-view.js を span＋role="img" の表示専用に書き換え、app.js の onSelect を削除、説明文を変更して Green（E2E 194件）
 - テスト修正のミス: policy-consistency は時計を固定していないため固定日付のマスが存在せずタイムアウト → 「今月の押せる最初のマス」を使うように修正
 - README・HUMAN_TODO 更新、sw.js VERSION=6
+
+## 2026-11-26 機能追加8-1: 「ちょっと出た」のロジック
+- やったこと: records（STATUS.LITTLE=3、isValidStatus、normalizeRecords、設定・上書き）、コーデック（2bit=3 を「ちょっと出た」として往復）、storage（3 を保持）、since（起点に含める）、month-calendar（状態保持・littleCount）、heatmap（3 は保持・2 は未記録）のテストを先に更新 Red 10件 → 実装して Green（ユニット155件、E2E 194件は変更なしで pass）
+- 判断: 形式 v1 のまま値 3 を割り当て（旧バックアップとも互換）。onlyDone は normalizeRecords に改名（isRecorded を追加）。仕様変更前のヒートマップのテスト1件（2 をそのまま返す期待）は現仕様（未記録扱い）に合わせて修正

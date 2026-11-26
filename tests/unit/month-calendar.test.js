@@ -63,3 +63,12 @@ test('不正な引数は例外', () => {
   assert.throws(() => buildMonthCalendar({}, '2024-13', '2024-03-10'), RangeError);
   assert.throws(() => buildMonthCalendar({}, '2024-03', '2024-02-30'), RangeError);
 });
+
+test('ちょっと出た: 状態を保ち、日数は別に数える', () => {
+  const records = { '2024-03-01': STATUS.DONE, '2024-03-02': STATUS.LITTLE, '2024-03-03': STATUS.LITTLE, '2024-03-20': STATUS.LITTLE };
+  const cal = buildMonthCalendar(records, '2024-03', '2024-03-10');
+  const by = Object.fromEntries(cal.weeks.flat().filter(Boolean).map((c) => [c.date, c]));
+  assert.equal(by['2024-03-02'].status, STATUS.LITTLE);
+  assert.equal(cal.doneCount, 1);
+  assert.equal(cal.littleCount, 2, '未来の分は数えない');
+});

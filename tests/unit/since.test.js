@@ -37,3 +37,8 @@ test('基準日より未来の記録は無視する', () => {
 test('不正な基準日は例外', () => {
   assert.throws(() => daysSinceLastDone({}, '2024-02-30'), RangeError);
 });
+
+test('「ちょっと出た」も起点に含める', () => {
+  assert.equal(daysSinceLastDone({ '2024-03-05': D, '2024-03-08': STATUS.LITTLE }, '2024-03-10'), 2);
+  assert.equal(daysSinceLastDone({ '2024-03-10': STATUS.LITTLE }, '2024-03-10'), 0);
+});

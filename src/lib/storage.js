@@ -1,7 +1,7 @@
 // 永続化アダプタ。localStorage（または同じインターフェース）をラップし、例外が出ても落ちない。
 // 保存値は信頼せず、読み込み時に検証して不正な部分は捨てる。
 import { isValidDateKey } from './date.js';
-import { STATUS } from './records.js';
+import { isRecorded } from './records.js';
 
 export const STORAGE_KEY = 'un-deta:v1';
 const DATA_VERSION = 1;
@@ -14,8 +14,8 @@ function sanitizeRecords(raw) {
   if (raw && typeof raw === 'object' && !Array.isArray(raw)) {
     for (const k of Object.keys(raw)) {
       const v = raw[k];
-      // 仕様変更により「出た」だけを記録する。旧データの「出てない」(2) は未記録として扱う
-      if (isValidDateKey(k) && v === STATUS.DONE) out[k] = v;
+      // 「出た」「ちょっと出た」だけを読む。旧データの「出てない」(2) は未記録として扱う
+      if (isValidDateKey(k) && isRecorded(v)) out[k] = v;
     }
   }
   return Object.freeze(out);

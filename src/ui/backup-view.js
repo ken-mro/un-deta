@@ -1,7 +1,7 @@
 // バックアップ画面: 書き出し（コピー）と読み込み（上書き／統合）
 import { encodeBackup, decodeBackup, BackupError } from '../lib/backup-codec.js';
 import { analyzeImport, mergeRecords, overwriteRecords } from '../lib/import-merge.js';
-import { countRecords, onlyDone } from '../lib/records.js';
+import { countRecords, normalizeRecords } from '../lib/records.js';
 import { formatDateJa } from './heatmap-view.js';
 import { encodeQR, qrToSvgPath } from '../lib/qr.js';
 
@@ -46,8 +46,8 @@ export function createBackupView({ getState, update, todayKey }) {
     setStatus('');
     let incoming;
     try {
-      // 仕様変更により「出た」だけを取り込む（旧形式の「出てない」は未記録として扱う）
-      incoming = onlyDone(decodeBackup(importText.value));
+      // 「出た」「ちょっと出た」だけを取り込む（旧形式の「出てない」は未記録として扱う）
+      incoming = normalizeRecords(decodeBackup(importText.value));
     } catch (e) {
       setError(e instanceof BackupError ? e.message : 'バックアップの文字列として読み取れませんでした。');
       return;

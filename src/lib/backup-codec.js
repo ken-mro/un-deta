@@ -2,7 +2,7 @@
 //
 // 形式 v1: 先頭1文字 = フォーマットバージョン '1'、続けて base64url（パディングなし）で
 //   [開始日: 1970-01-01 からの日数 3バイト BE]
-//   [記録: 1日2bit（0=未記録, 1=出た, 2=出てない）、1バイトに4日、下位ビットから]
+//   [記録: 1日2bit（0=未記録, 1=出た, 2=旧「出てない」, 3=ちょっと出た）、1バイトに4日、下位ビットから]
 //   [CRC-8（多項式 0x07）: 上記バイト列に対して 1バイト]
 // 空データは '1' のみ。末尾の未記録は詰める。
 import { addDays, diffDays, isValidDateKey } from './date.js';
@@ -118,7 +118,7 @@ export function decodeBackup(input) {
       const v = (body[i] >> (k * 2)) & 3;
       if (v === 0) continue;
       const offset = (i - 3) * 4 + k;
-      if (v === 3 || startDay + offset > MAX_DAY) throw new BackupError('MALFORMED');
+      if (startDay + offset > MAX_DAY) throw new BackupError('MALFORMED');
       records[addDays(start, offset)] = v;
     }
   }

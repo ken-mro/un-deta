@@ -43,7 +43,7 @@ test('壊れた JSON や想定外の値は既定値／不正な日だけ捨て�
   mem.setItem(STORAGE_KEY, 'null');
   assert.deepEqual(createStorage(mem).load(), DEFAULT);
   mem.setItem(STORAGE_KEY, JSON.stringify({ v: 1, records: { '2024-01-01': 1, '2024-02-30': 1, '2024-01-03': 3, __proto__x: 2, '2024-01-04': '2' }, lastBackupKey: 'x', dismissedKey: '2024-01-05' }));
-  assert.deepEqual(createStorage(mem).load(), { records: { '2024-01-01': 1 }, lastBackupKey: null, dismissedKey: '2024-01-05' });
+  assert.deepEqual(createStorage(mem).load(), { records: { '2024-01-01': 1, '2024-01-03': 3 }, lastBackupKey: null, dismissedKey: '2024-01-05' });
 });
 
 test('保存データ中の「出てない」(2) は未記録として読み込む（仕様変更: 「出た」だけを記録）', () => {

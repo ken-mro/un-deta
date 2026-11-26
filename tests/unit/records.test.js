@@ -3,8 +3,8 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { STATUS, emptyRecords, getStatus, setStatus, clearStatus, countRecords, isValidStatus } from '../../src/lib/records.js';
 
-test('STATUS は 0=未記録, 1=出た, 2=出てない（バックアップの2bit値と一致）', () => {
-  assert.deepEqual({ ...STATUS }, { NONE: 0, DONE: 1, NOT_YET: 2 });
+test('STATUS は 0=未記録, 1=出た, 2=旧「出てない」, 3=ちょっと出た（バックアップの2bit値と一致）', () => {
+  assert.deepEqual({ ...STATUS }, { NONE: 0, DONE: 1, NOT_YET: 2, LITTLE: 3 });
   assert.ok(Object.isFrozen(STATUS));
 });
 
@@ -47,17 +47,25 @@ test('不正な日付キー・状態値は例外（ストアを壊さない）',
   const r = emptyRecords();
   assert.throws(() => setStatus(r, '2023-02-29', STATUS.DONE), RangeError);
   assert.throws(() => setStatus(r, '__proto__', STATUS.DONE), RangeError);
-  assert.throws(() => setStatus(r, '2024-01-01', 3), RangeError);
+  assert.throws(() => setStatus(r, '2024-01-01', 4), RangeError);
   assert.throws(() => setStatus(r, '2024-01-01', '1'), RangeError);
   assert.throws(() => getStatus(r, 'x'), RangeError);
   assert.equal(isValidStatus(2), true);
+  assert.equal(isValidStatus(3), true);
   assert.equal(isValidStatus(-1), false);
 });
 
-test('onlyDone: 「出た」だけを残す（旧データ・読み込みデータの「出てない」は未記録として扱う）', async () => {
-  const { onlyDone } = await import('../../src/lib/records.js');
-  const r = onlyDone({ '2024-01-01': STATUS.DONE, '2024-01-02': STATUS.NOT_YET, '2024-01-03': STATUS.DONE });
-  assert.deepEqual({ ...r }, { '2024-01-01': STATUS.DONE, '2024-01-03': STATUS.DONE });
+test('normalizeRecords: 「出た」「ちょっと出た」だけを残す（旧データの「出てない」は未記録として扱う）', async () => {
+  const { normalizeRecords } = await import('../../src/lib/records.js');
+  const r = normalizeRecords({ '2024-01-01': STATUS.DONE, '2024-01-02': STATUS.NOT_YET, '2024-01-03': STATUS.LITTLE });
+  assert.deepEqual({ ...r }, { '2024-01-01': STATUS.DONE, '2024-01-03': STATUS.LITTLE });
   assert.ok(Object.isFrozen(r));
-  assert.deepEqual({ ...onlyDone({}) }, {});
+  assert.deepEqual({ ...normalizeRecords({}) }, {});
+});
+
+test('ちょっと出た を設定・取得・上書きできる', () => {
+  const r1 = setStatus(emptyRecords(), '2024-01-01', STATUS.LITTLE);
+  assert.equal(getStatus(r1, '2024-01-01'), STATUS.LITTLE);
+  const r2 = setStatus(r1, '2024-01-01', STATUS.DONE);
+  assert.equal(getStatus(r2, '2024-01-01'), STATUS.DONE);
 });

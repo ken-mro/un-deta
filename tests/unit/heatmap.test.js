@@ -39,7 +39,7 @@ test('各セルに状態を持つ', () => {
   const { weeks } = buildHeatmap({ '2024-03-09': STATUS.DONE, '2024-03-08': STATUS.NOT_YET, '2022-01-01': STATUS.DONE }, '2024-03-10');
   const byDate = Object.fromEntries(weeks.flat().filter(Boolean).map((c) => [c.date, c.status]));
   assert.equal(byDate['2024-03-09'], STATUS.DONE);
-  assert.equal(byDate['2024-03-08'], STATUS.NOT_YET);
+  assert.equal(byDate['2024-03-08'], STATUS.NONE, '旧データの「出てない」は未記録として扱う');
   assert.equal(byDate['2024-03-07'], STATUS.NONE);
   assert.equal(byDate['2022-01-01'], undefined, '範囲外は含めない');
 });
@@ -56,4 +56,11 @@ test('月ラベル: その月の1日を含む列に付ける', () => {
 test('うるう年の年跨ぎでも 365日', () => {
   const { weeks } = buildHeatmap({}, '2024-12-31');
   assert.equal(weeks.flat().filter(Boolean).length, 365);
+});
+
+test('ちょっと出た はそのまま、旧データの「出てない」は未記録として扱う', () => {
+  const { weeks } = buildHeatmap({ '2024-03-09': STATUS.LITTLE, '2024-03-08': STATUS.NOT_YET }, '2024-03-10');
+  const byDate = Object.fromEntries(weeks.flat().filter(Boolean).map((c) => [c.date, c.status]));
+  assert.equal(byDate['2024-03-09'], STATUS.LITTLE);
+  assert.equal(byDate['2024-03-08'], STATUS.NONE);
 });
