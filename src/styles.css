@@ -688,3 +688,116 @@ button {
   margin-top: 2.5rem;
   color: var(--text-muted);
 }
+
+/* ---- 月のカレンダー ---- */
+.calendar {
+  margin: 2.5rem 0 0;
+}
+
+.calendar h2 {
+  font-size: 1.1rem;
+  margin: 0 0 0.5rem;
+}
+
+.calendar-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.calendar-heading-text {
+  margin: 0;
+  text-align: center;
+}
+
+.calendar-title {
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.calendar-summary {
+  margin-left: 0.5rem;
+  color: var(--text-muted);
+}
+
+.calendar-nav-btn {
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.calendar-nav-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.calendar-weekdays,
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(2.75rem, 1fr));
+  gap: 4px;
+}
+
+.calendar-weekdays {
+  margin-top: 0.75rem;
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.calendar-grid {
+  margin-top: 0.25rem;
+}
+
+.cal-day {
+  position: relative;
+  min-height: 2.9rem;
+  border: none;
+  border-radius: 10px;
+  background: var(--secondary);
+  color: var(--secondary-text);
+  font-size: 0.95rem;
+  font-variant-numeric: tabular-nums;
+}
+
+/* 「出た」の日: 塗りつぶし＋印（色だけに頼らない） */
+.cal-day[data-status="1"] {
+  background: var(--accent);
+  color: var(--accent-text);
+  font-weight: 700;
+}
+
+.cal-day[data-status="1"]::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 6px;
+  width: 6px;
+  height: 6px;
+  margin-left: -3px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.cal-day[aria-current="date"] {
+  outline: 2px solid var(--text);
+  outline-offset: 1px;
+}
+
+.cal-day:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.cal-day:disabled {
+  background: transparent;
+  color: var(--text-muted);
+  opacity: 0.6;
+  cursor: default;
+}

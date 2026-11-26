@@ -5,6 +5,7 @@ import { daysSinceLastDone } from './lib/since.js';
 import { createHeatmapView, formatDateJa } from './ui/heatmap-view.js';
 import { detectPlatform } from './lib/platform.js';
 import { createBackupView } from './ui/backup-view.js';
+import { createCalendarView } from './ui/calendar-view.js';
 import { shouldRemindBackup } from './lib/backup-reminder.js';
 import { createStorage, getLocalStorage, requestPersist } from './lib/storage.js';
 
@@ -42,6 +43,7 @@ function render() {
   sinceEl.hidden = since === null || since === 0;
   sinceEl.textContent = since ? `前回の「出た」から ${since}日` : '';
 
+  calendar.render(state.records, key);
   heatmap.render(state.records, key);
   backupView.render();
 
@@ -66,13 +68,18 @@ $('btn-reminder-later').addEventListener('click', () => {
 const STATUS_NAME = { [STATUS.NONE]: '未記録', [STATUS.DONE]: '出た' };
 const dayDialog = $('day-dialog');
 let editingDate = null;
+let returnFocus = null; // 閉じたあとにフォーカスを戻すビュー
 
-const heatmap = createHeatmapView($('heatmap'), (date) => {
+function openDayDialog(date, view) {
   editingDate = date;
+  returnFocus = view;
   $('day-dialog-title').textContent = formatDateJa(date);
   $('day-dialog-current').textContent = `いまの記録: ${STATUS_NAME[getStatus(state.records, date)]}`;
   dayDialog.showModal();
-});
+}
+
+const heatmap = createHeatmapView($('heatmap'), (date) => openDayDialog(date, heatmap));
+const calendar = createCalendarView($('calendar'), (date) => openDayDialog(date, calendar));
 
 dayDialog.addEventListener('click', (e) => {
   const btn = e.target.closest('button');
@@ -85,8 +92,9 @@ dayDialog.addEventListener('click', (e) => {
 
 dayDialog.addEventListener('close', () => {
   render();
-  if (editingDate) heatmap.focus(editingDate);
+  if (editingDate) returnFocus?.focus(editingDate);
   editingDate = null;
+  returnFocus = null;
 });
 
 // 押下時の演出（見た目だけ。読み上げは状態テキストで行う）

@@ -1,6 +1,6 @@
 // service worker: 全アセットをプリキャッシュし、オフラインで動かす。外部オリジンへのリクエストは扱わない。
 // アセットを更新したら VERSION を上げること（古いキャッシュは activate 時に削除される）。
-const VERSION = '3';
+const VERSION = '4';
 const CACHE = `un-deta-${VERSION}`;
 
 const PRECACHE = [
@@ -23,6 +23,7 @@ const PRECACHE = [
   './src/lib/since.js',
   './src/lib/storage.js',
   './src/ui/backup-view.js',
+  './src/ui/calendar-view.js',
   './src/ui/heatmap-view.js',
   './icons/apple-touch-icon.png',
   './icons/icon-192.png',

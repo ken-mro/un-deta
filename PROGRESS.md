@@ -220,3 +220,8 @@
 ## 2026-11-26 機能追加7-1: 月のカレンダーのロジック
 - やったこと: `tests/unit/month-calendar.test.js`（7件、Red）→ `src/lib/month-calendar.js`（isValidMonthKey / monthOf / addMonths / buildMonthCalendar）で Green。sw.js の PRECACHE に追加（ユニット148件）
 - 判断: 日曜始まり、前後の空白は null。セルは date/day/status/isToday/isFuture。「出た」日数は今日以前のその月だけ。旧データの 2 は未記録。canGoNext は今月より前のときだけ
+
+## 2026-11-26 機能追加7-2: カレンダーの UI
+- やったこと: `tests/e2e/calendar.spec.js`（8件×2: 今月表示と「出た」日数、曜日見出しと1日の列、前後の月移動・今月より先は不可・年跨ぎ、タップで記録／取り消しがホーム・ヒートマップに反映、ホームの記録が反映、未来は disabled、閉じたらフォーカス復帰。Red）→ `src/ui/calendar-view.js`、index.html の「カレンダー」節、app.js でダイアログを共通化（開いたビューへフォーカスを戻す）で Green（ユニット148件・E2E 172件）
+- 判断: マスは data-cal-date（ヒートマップの data-date と区別）。「出た」は塗り＋点の印、今日は aria-current="date"＋枠。月移動は今月なら「今月に追従」状態に戻す。calendar-view.js のプリキャッシュ漏れをユニットとオフライン E2E が検出 → 追加、sw.js VERSION=4
+- 申し送り: 次はキーボード操作（矢印・PageUp/PageDown）とアクセシビリティ・タップ領域の E2E

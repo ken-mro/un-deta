@@ -77,6 +77,22 @@
       <p class="save-error" id="save-error" role="alert" hidden>記録を保存できませんでした。ブラウザの設定（プライベートブラウズなど）をご確認ください。</p>
     </section>
 
+    <section class="calendar" id="calendar" aria-labelledby="calendar-heading">
+      <h2 id="calendar-heading">カレンダー</h2>
+      <div class="calendar-nav">
+        <button type="button" class="calendar-nav-btn" data-cal-nav="prev" aria-label="前の月">‹</button>
+        <p class="calendar-heading-text" aria-live="polite">
+          <span class="calendar-title" data-testid="calendar-title"></span>
+          <span class="calendar-summary" data-testid="calendar-summary"></span>
+        </p>
+        <button type="button" class="calendar-nav-btn" data-cal-nav="next" aria-label="次の月">›</button>
+      </div>
+      <div class="calendar-weekdays" data-testid="calendar-weekdays" aria-hidden="true">
+        <span>日</span><span>月</span><span>火</span><span>水</span><span>木</span><span>金</span><span>土</span>
+      </div>
+      <div class="calendar-grid" role="group"></div>
+    </section>
+
     <section class="history" aria-labelledby="history-heading">
       <h2 id="history-heading">これまでの記録</h2>
       <p class="hint">日付をタップすると、あとから修正・取り消しできます。</p>
