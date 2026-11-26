@@ -41,14 +41,14 @@ async function contrastOf(page, selector) {
 
 const TEXT_SELECTORS = [
   '.app-title', '.today', '.today-status', '#btn-done', '#btn-little', '.since', '.hint',
-  '.calendar-title', '.calendar-summary', '.calendar-weekdays span', '.cal-day[data-status="0"]:not(:disabled)', '.cal-day[data-status="1"]',
+  '.calendar-title', '.calendar-summary', '.calendar-weekdays span', '.cal-day[data-status="0"]:not(:disabled)', '.cal-day[data-status="1"]', '.cal-day[data-status="3"]',
   '.install-banner p', '.reminder p', '.legend li', '#export-text', '.field-label', '#btn-copy', '.muted', '#btn-clear-today',
 ];
 
 for (const scheme of ['light', 'dark']) {
   test(`${scheme}: 主要な文字のコントラスト比が 4.5:1 以上`, async ({ page }) => {
     await page.emulateMedia({ colorScheme: scheme });
-    await seed(page, { records: { '2024-01-01': 1, '2024-03-07': 1 } });
+    await seed(page, { records: { '2024-01-01': 1, '2024-03-07': 1, '2024-03-05': 3 } });
     await page.goto('/');
     for (const sel of TEXT_SELECTORS) {
       const r = await contrastOf(page, sel);

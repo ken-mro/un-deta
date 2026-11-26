@@ -13,6 +13,7 @@
   --cell-none: #e6dfd3;
   --little-bg: #e9cfae;
   --little-text: #3d2a14;
+  --cell-little: #d8a46a;
   --warn-bg: #fff3d6;
   --warn-text: #4a3500;
   --warn-border: #e8c66a;
@@ -39,6 +40,7 @@
     --cell-none: #3a3029;
     --little-bg: #6a4a2b;
     --little-text: #f6e6d2;
+    --cell-little: #8a5f36;
   }
 }
 
@@ -349,6 +351,11 @@ button {
 .heatmap-cell[data-status="1"],
 .legend-swatch[data-status="1"] {
   background: var(--accent);
+}
+
+.heatmap-cell[data-status="3"],
+.legend-swatch[data-status="3"] {
+  background: var(--cell-little);
 }
 
 
@@ -735,7 +742,8 @@ button {
 }
 
 .calendar-summary {
-  margin-left: 0.5rem;
+  display: block;
+  font-size: 0.9rem;
   color: var(--text-muted);
 }
 
@@ -802,6 +810,25 @@ button {
   width: 6px;
   height: 6px;
   margin-left: -3px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+/* 「ちょっと出た」の日: 薄い塗り＋小さい点 */
+.cal-day[data-status="3"] {
+  background: var(--little-bg);
+  color: var(--little-text);
+  font-weight: 700;
+}
+
+.cal-day[data-status="3"]::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 7px;
+  width: 4px;
+  height: 4px;
+  margin-left: -2px;
   border-radius: 50%;
   background: currentColor;
 }

@@ -54,3 +54,44 @@ test('「出た」が大きく、「ちょっと出た」は小さめ', async ({
   const small = await littleBtn(page).boundingBox();
   expect(small.width * small.height).toBeLessThan((big.width * big.height) / 2);
 });
+
+test.describe('カレンダー・ヒートマップ・修正ダイアログ', () => {
+  const day = (page, date) => page.locator(`[data-cal-date="${date}"]`);
+  const calendar = (page) => page.getByRole('region', { name: 'カレンダー' });
+  const heatmap = (page) => page.getByRole('region', { name: 'これまでの記録' });
+
+  test('カレンダーで「ちょっと出た」を区別して表示し、見出しに日数を出す', async ({ page }) => {
+    await seed(page, { records: { '2024-03-01': 1, '2024-03-02': 3, '2024-03-05': 3 } });
+    await page.goto('/');
+    await expect(day(page, '2024-03-02')).toHaveAttribute('data-status', '3');
+    await expect(day(page, '2024-03-02')).toHaveAccessibleName(/2024年3月2日（土） ちょっと出た/);
+    await expect(calendar(page).getByTestId('calendar-summary')).toHaveText('出た 1日（ちょっと 2日）');
+    const bg = (date) => day(page, date).evaluate((el) => getComputedStyle(el).backgroundColor);
+    expect(await bg('2024-03-02')).not.toBe(await bg('2024-03-01'));
+    expect(await bg('2024-03-02')).not.toBe(await bg('2024-03-03'));
+  });
+
+  test('修正ダイアログで「ちょっと出た」を選べる', async ({ page }) => {
+    await page.goto('/');
+    await day(page, '2024-03-04').click();
+    const dialog = page.getByRole('dialog');
+    await dialog.getByRole('button', { name: 'ちょっと出た', exact: true }).click();
+    await expect(dialog).toBeHidden();
+    await expect(day(page, '2024-03-04')).toHaveAttribute('data-status', '3');
+    await expect(page.locator('[data-date="2024-03-04"]')).toHaveAttribute('data-status', '3');
+    expect((await readSaved(page)).records['2024-03-04']).toBe(3);
+    await day(page, '2024-03-04').click();
+    await expect(dialog).toContainText('いまの記録: ちょっと出た');
+  });
+
+  test('ヒートマップは「ちょっと出た」を別の色で表示し、凡例は3つ', async ({ page }) => {
+    await seed(page, { records: { '2024-03-01': 1, '2024-03-02': 3 } });
+    await page.goto('/');
+    await expect(page.locator('[data-date="2024-03-02"]')).toHaveAttribute('data-status', '3');
+    const bg = (date) => page.locator(`[data-date="${date}"]`).evaluate((el) => getComputedStyle(el).backgroundColor);
+    expect(await bg('2024-03-02')).not.toBe(await bg('2024-03-01'));
+    expect(await bg('2024-03-02')).not.toBe(await bg('2024-03-03'));
+    await expect(heatmap(page).getByRole('img')).toHaveAccessibleName('直近1年で「出た」日: 1日（ちょっと 1日）');
+    await expect(page.getByRole('list', { name: '凡例' }).getByRole('listitem')).toHaveText(['出た', 'ちょっと出た', '未記録']);
+  });
+});

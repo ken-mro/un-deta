@@ -5,6 +5,7 @@ import { STATUS } from '../lib/records.js';
 import { formatDateJa } from './heatmap-view.js';
 
 const WEEKDAYS = ['日', '月', '火', '水', '木', '金', '土'];
+const STATUS_LABEL = { [STATUS.NONE]: '未記録', [STATUS.DONE]: '出た', [STATUS.LITTLE]: 'ちょっと出た' };
 
 /**
  * @param {HTMLElement} root カレンダー節の要素
@@ -80,7 +81,7 @@ export function createCalendarView(root, onSelect) {
     const key = monthKey ?? monthOf(todayKey);
     const cal = buildMonthCalendar(records, key, todayKey);
     title.textContent = `${cal.year}年${cal.month}月`;
-    summary.textContent = `出た ${cal.doneCount}日`;
+    summary.textContent = `出た ${cal.doneCount}日${cal.littleCount ? `（ちょっと ${cal.littleCount}日）` : ''}`;
     next.disabled = !cal.canGoNext;
     grid.setAttribute('aria-label', `${cal.year}年${cal.month}月の記録`);
 
@@ -97,7 +98,7 @@ export function createCalendarView(root, onSelect) {
       btn.dataset.calDate = c.date;
       btn.dataset.status = String(c.status);
       btn.textContent = String(c.day);
-      btn.setAttribute('aria-label', `${formatDateJa(c.date)} ${c.status === STATUS.DONE ? '出た' : '未記録'}${c.isToday ? '（今日）' : ''}`);
+      btn.setAttribute('aria-label', `${formatDateJa(c.date)} ${STATUS_LABEL[c.status]}${c.isToday ? '（今日）' : ''}`);
       if (c.isToday) btn.setAttribute('aria-current', 'date');
       if (c.isFuture) btn.disabled = true;
       btn.tabIndex = c.date === focusDate ? 0 : -1;

@@ -33,10 +33,10 @@ test('ホームで記録するとヒートマップにも反映される', async
   await expect(heatmap(page).getByRole('img')).toHaveAccessibleName('直近1年で「出た」日: 1日');
 });
 
-test('凡例は「出た」「未記録」の2つ', async ({ page }) => {
+test('凡例は「出た」「ちょっと出た」「未記録」の3つ', async ({ page }) => {
   await page.goto('/');
   const legend = page.getByRole('list', { name: '凡例' }).getByRole('listitem');
-  await expect(legend).toHaveText(['出た', '未記録']);
+  await expect(legend).toHaveText(['出た', 'ちょっと出た', '未記録']);
 });
 
 test('マスは押しても反応しない（ボタンではなく、ダイアログも開かない）', async ({ page }) => {
