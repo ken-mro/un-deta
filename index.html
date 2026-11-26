@@ -70,8 +70,40 @@
         <span class="sparkle"></span><span class="sparkle"></span><span class="sparkle"></span><span class="sparkle"></span><span class="sparkle"></span><span class="sparkle"></span>
       </div>
       <div class="record-buttons">
-        <button type="button" class="btn-done" id="btn-done" aria-pressed="false">出た</button>
-        <button type="button" class="btn-little" id="btn-little" aria-pressed="false">ちょっと出た</button>
+        <button type="button" class="btn-done" id="btn-done" aria-pressed="false">
+          <svg class="poo" viewBox="112 84 288 326" aria-hidden="true" focusable="false">
+            <g class="poo-body">
+              <rect x="128" y="300" width="256" height="96" rx="48"/>
+              <rect x="164" y="222" width="184" height="90" rx="45"/>
+              <rect x="200" y="156" width="112" height="76" rx="38"/>
+              <path d="M232 160c0-34 22-56 52-62-8 14-6 30 4 44z"/>
+            </g>
+            <g class="poo-shine">
+              <rect x="150" y="314" width="70" height="14" rx="7"/>
+              <rect x="184" y="236" width="50" height="12" rx="6"/>
+              <rect x="218" y="170" width="30" height="10" rx="5"/>
+            </g>
+            <g class="poo-face">
+              <circle cx="218" cy="334" r="13"/>
+              <circle cx="294" cy="334" r="13"/>
+              <path d="M232 362q24 20 48 0" fill="none" stroke-width="10" stroke-linecap="round"/>
+            </g>
+          </svg>
+          <span class="btn-label">出た</span>
+        </button>
+        <button type="button" class="btn-little" id="btn-little" aria-pressed="false">
+          <svg class="poo poo-mini" viewBox="0 0 64 52" aria-hidden="true" focusable="false">
+            <g class="poo-body">
+              <rect x="6" y="22" width="52" height="26" rx="13"/>
+              <path d="M24 24c0-10 6-17 15-19-2 4-2 9 1 13z"/>
+            </g>
+            <g class="poo-face">
+              <circle cx="24" cy="34" r="3"/>
+              <circle cx="40" cy="34" r="3"/>
+            </g>
+          </svg>
+          <span class="btn-label">ちょっと出た</span>
+        </button>
       </div>
       <p class="since" data-testid="since" hidden></p>
       <button type="button" class="btn-link" id="btn-clear-today" hidden>今日の記録を取り消す</button>

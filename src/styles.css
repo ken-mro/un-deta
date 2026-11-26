@@ -129,22 +129,53 @@ button {
 }
 
 .btn-done {
-  width: min(16rem, 80vw);
-  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  width: min(15rem, 72vw);
+  padding: 0.5rem 0.5rem 0.25rem;
   border: none;
-  border-radius: 50%;
-  background: var(--accent);
-  color: var(--accent-text);
-  font-size: 2.5rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  box-shadow: 0 8px 0 rgba(0, 0, 0, 0.18);
-  transition: transform 0.08s ease, box-shadow 0.08s ease;
+  border-radius: 28px;
+  background: transparent;
+  color: var(--text);
+  font-size: 2.4rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  line-height: 1.2;
 }
 
-.btn-done:active {
-  transform: translateY(6px);
-  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.18);
+/* うんちのキャラクター（アイコンと同じ形）。色は変数でダークモードに追従 */
+.poo {
+  display: block;
+  overflow: visible;
+}
+
+.poo-body {
+  fill: var(--accent);
+}
+
+.poo-shine {
+  fill: #fff;
+  opacity: 0.22;
+}
+
+.poo-face {
+  fill: var(--accent-text);
+  stroke: var(--accent-text);
+}
+
+.btn-done .poo {
+  width: 82%;
+  height: auto;
+  filter: drop-shadow(0 6px 0 rgba(0, 0, 0, 0.16));
+  transform-origin: 50% 100%;
+  transition: transform 0.12s ease;
+}
+
+/* 押すと少しつぶれる */
+.btn-done:active .poo {
+  transform: scale(1.06, 0.88);
 }
 
 .btn-pill {
@@ -160,15 +191,28 @@ button {
 }
 
 .btn-little {
-  min-width: 10rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
   min-height: 3rem;
-  padding: 0.5rem 1.5rem;
+  padding: 0.4rem 1.3rem 0.4rem 0.9rem;
   border: none;
   border-radius: 999px;
   background: var(--little-bg);
   color: var(--little-text);
   font-size: 1.05rem;
-  font-weight: 600;
+  font-weight: 700;
+}
+
+.poo-mini {
+  width: 1.9rem;
+  height: auto;
+  transform-origin: 50% 100%;
+  transition: transform 0.12s ease;
+}
+
+.btn-little:active .poo-mini {
+  transform: scale(1.08, 0.86);
 }
 
 /* 「ちょっと出た」は粒を少なめに（控えめな演出） */
@@ -795,42 +839,20 @@ button {
   font-variant-numeric: tabular-nums;
 }
 
-/* 「出た」の日: 塗りつぶし＋印（色だけに頼らない） */
+/* 「出た」の日: 濃い塗りつぶし */
 .cal-day[data-status="1"] {
   background: var(--accent);
   color: var(--accent-text);
   font-weight: 700;
 }
 
-.cal-day[data-status="1"]::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  bottom: 6px;
-  width: 6px;
-  height: 6px;
-  margin-left: -3px;
-  border-radius: 50%;
-  background: currentColor;
-}
 
-/* 「ちょっと出た」の日: 薄い塗り＋小さい点 */
+/* 「ちょっと出た」の日: 薄い塗り＋細い枠（色だけに頼らず区別） */
 .cal-day[data-status="3"] {
   background: var(--little-bg);
   color: var(--little-text);
   font-weight: 700;
-}
-
-.cal-day[data-status="3"]::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  bottom: 7px;
-  width: 4px;
-  height: 4px;
-  margin-left: -2px;
-  border-radius: 50%;
-  background: currentColor;
+  box-shadow: inset 0 0 0 2px var(--accent);
 }
 
 .cal-day[aria-current="date"] {
