@@ -1,5 +1,6 @@
 // 月のカレンダーの描画（日付タップで修正ダイアログを開く）
 import { buildMonthCalendar, addMonths, monthOf } from '../lib/month-calendar.js';
+import { addDays, isValidDateKey } from '../lib/date.js';
 import { STATUS } from '../lib/records.js';
 import { formatDateJa } from './heatmap-view.js';
 
@@ -17,8 +18,46 @@ export function createCalendarView(root, onSelect) {
   const next = root.querySelector('[data-cal-nav="next"]');
   let monthKey = null; // null = 今月に追従
   let last = { records: {}, todayKey: '' };
+  let focusDate = null; // roving tabindex で Tab が止まる日
 
   const cellFor = (date) => grid.querySelector(`[data-cal-date="${date}"]`);
+
+  /** 日付へフォーカスを移す（別の月なら表示を切り替える。未来の日には移らない） */
+  function moveTo(date) {
+    if (date > last.todayKey) return;
+    const current = monthOf(last.todayKey);
+    const target = monthOf(date);
+    monthKey = target >= current ? null : target;
+    focusDate = date;
+    render(last.records, last.todayKey);
+    cellFor(date)?.focus();
+  }
+
+  /** 同じ日にちで n か月ずらす（月末に丸め、今日より先にはしない） */
+  function shiftMonth(date, n) {
+    const month = addMonths(monthOf(date), n);
+    let day = Number(date.slice(8));
+    let d = `${month}-${String(day).padStart(2, '0')}`;
+    while (!isValidDateKey(d)) d = `${month}-${String(--day).padStart(2, '0')}`;
+    if (d <= last.todayKey) return d;
+    // 今月なら今日に丸める。未来の月には行かない
+    return month === monthOf(last.todayKey) ? last.todayKey : null;
+  }
+
+  grid.addEventListener('keydown', (e) => {
+    const btn = e.target.closest('[data-cal-date]');
+    if (!btn) return;
+    const date = btn.dataset.calDate;
+    const delta = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -7, ArrowDown: 7 }[e.key];
+    if (delta !== undefined) {
+      e.preventDefault();
+      moveTo(addDays(date, delta));
+    } else if (e.key === 'PageUp' || e.key === 'PageDown') {
+      e.preventDefault();
+      const target = shiftMonth(date, e.key === 'PageUp' ? -1 : 1);
+      if (target) moveTo(target);
+    }
+  });
 
   function go(delta) {
     const current = monthOf(last.todayKey);
@@ -31,7 +70,9 @@ export function createCalendarView(root, onSelect) {
 
   grid.addEventListener('click', (e) => {
     const btn = e.target.closest('[data-cal-date]');
-    if (btn && !btn.disabled) onSelect(btn.dataset.calDate);
+    if (!btn || btn.disabled) return;
+    focusDate = btn.dataset.calDate;
+    onSelect(btn.dataset.calDate);
   });
 
   function render(records, todayKey) {
@@ -42,6 +83,10 @@ export function createCalendarView(root, onSelect) {
     summary.textContent = `出た ${cal.doneCount}日`;
     next.disabled = !cal.canGoNext;
     grid.setAttribute('aria-label', `${cal.year}年${cal.month}月の記録`);
+
+    // Tab が止まる日: 表示中の月にあればその日、なければ今日、それもなければ1日
+    const inMonth = (d) => d && monthOf(d) === key && d <= todayKey;
+    if (!inMonth(focusDate)) focusDate = inMonth(todayKey) ? todayKey : `${key}-01`;
 
     const nodes = [];
     cal.weeks.flat().forEach((c, i) => {
@@ -55,6 +100,7 @@ export function createCalendarView(root, onSelect) {
       btn.setAttribute('aria-label', `${formatDateJa(c.date)} ${c.status === STATUS.DONE ? '出た' : '未記録'}${c.isToday ? '（今日）' : ''}`);
       if (c.isToday) btn.setAttribute('aria-current', 'date');
       if (c.isFuture) btn.disabled = true;
+      btn.tabIndex = c.date === focusDate ? 0 : -1;
       if (c.day === 1) btn.style.gridColumnStart = String((i % 7) + 1);
       nodes.push(btn);
     });
@@ -64,7 +110,13 @@ export function createCalendarView(root, onSelect) {
   return {
     render,
     focus(date) {
-      cellFor(date)?.focus();
+      focusDate = date;
+      grid.querySelectorAll('[data-cal-date][tabindex="0"]').forEach((c) => (c.tabIndex = -1));
+      const cell = cellFor(date);
+      if (cell) {
+        cell.tabIndex = 0;
+        cell.focus();
+      }
     },
     weekdays: WEEKDAYS,
   };

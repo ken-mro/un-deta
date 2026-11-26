@@ -90,3 +90,72 @@ test('閉じたらフォーカスがカレンダーの日付に戻る', async ({
   await expect(page.getByRole('dialog')).toBeHidden();
   await expect(day(page, '2024-03-04')).toBeFocused();
 });
+
+test.describe('キーボード操作', () => {
+  test('Tab で止まるのは1マスだけ（今日）', async ({ page }) => {
+    await page.goto('/');
+    await expect(day(page, '2024-03-10')).toHaveAttribute('tabindex', '0');
+    await expect(day(page, '2024-03-09')).toHaveAttribute('tabindex', '-1');
+  });
+
+  test('矢印で ±1日 / ±7日、Enter で開く', async ({ page }) => {
+    await page.goto('/');
+    await day(page, '2024-03-10').focus();
+    await page.keyboard.press('ArrowLeft');
+    await expect(day(page, '2024-03-09')).toBeFocused();
+    await page.keyboard.press('ArrowUp');
+    await expect(day(page, '2024-03-02')).toBeFocused();
+    await page.keyboard.press('ArrowRight');
+    await expect(day(page, '2024-03-03')).toBeFocused();
+    await page.keyboard.press('ArrowDown');
+    await expect(day(page, '2024-03-10')).toBeFocused();
+    await page.keyboard.press('ArrowLeft');
+    await page.keyboard.press('Enter');
+    await expect(page.getByRole('dialog')).toContainText('2024年3月9日');
+  });
+
+  test('未来の日には移動しない', async ({ page }) => {
+    await page.goto('/');
+    await day(page, '2024-03-10').focus();
+    await page.keyboard.press('ArrowRight');
+    await expect(day(page, '2024-03-10')).toBeFocused();
+    await page.keyboard.press('ArrowDown');
+    await expect(day(page, '2024-03-10')).toBeFocused();
+  });
+
+  test('月の境目を越えると隣の月に切り替わる', async ({ page }) => {
+    await page.goto('/');
+    await day(page, '2024-03-10').focus();
+    await page.keyboard.press('ArrowUp'); // 3/3
+    await page.keyboard.press('ArrowUp'); // 2/25
+    await expect(calendar(page).getByTestId('calendar-title')).toHaveText('2024年2月');
+    await expect(day(page, '2024-02-25')).toBeFocused();
+    await page.keyboard.press('ArrowDown'); // 3/3
+    await expect(calendar(page).getByTestId('calendar-title')).toHaveText('2024年3月');
+    await expect(day(page, '2024-03-03')).toBeFocused();
+  });
+
+  test('PageUp / PageDown で月を切り替える（日にちは月末に丸める）', async ({ page }) => {
+    await page.goto('/');
+    await day(page, '2024-03-10').focus();
+    await page.keyboard.press('PageUp');
+    await expect(calendar(page).getByTestId('calendar-title')).toHaveText('2024年2月');
+    await expect(day(page, '2024-02-10')).toBeFocused();
+    await page.keyboard.press('PageDown');
+    await expect(day(page, '2024-03-10')).toBeFocused();
+    await page.keyboard.press('PageDown'); // 未来の月には行かない
+    await expect(calendar(page).getByTestId('calendar-title')).toHaveText('2024年3月');
+  });
+
+  test('PageDown で 1月31日 → 2月29日（月末に丸める）', async ({ page }) => {
+    await page.goto('/');
+    await day(page, '2024-03-10').focus();
+    await page.keyboard.press('PageUp');
+    await page.keyboard.press('PageUp');
+    await expect(calendar(page).getByTestId('calendar-title')).toHaveText('2024年1月');
+    await day(page, '2024-01-31').focus();
+    await page.keyboard.press('PageDown');
+    await expect(calendar(page).getByTestId('calendar-title')).toHaveText('2024年2月');
+    await expect(day(page, '2024-02-29')).toBeFocused();
+  });
+});

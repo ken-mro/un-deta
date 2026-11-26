@@ -225,3 +225,8 @@
 - やったこと: `tests/e2e/calendar.spec.js`（8件×2: 今月表示と「出た」日数、曜日見出しと1日の列、前後の月移動・今月より先は不可・年跨ぎ、タップで記録／取り消しがホーム・ヒートマップに反映、ホームの記録が反映、未来は disabled、閉じたらフォーカス復帰。Red）→ `src/ui/calendar-view.js`、index.html の「カレンダー」節、app.js でダイアログを共通化（開いたビューへフォーカスを戻す）で Green（ユニット148件・E2E 172件）
 - 判断: マスは data-cal-date（ヒートマップの data-date と区別）。「出た」は塗り＋点の印、今日は aria-current="date"＋枠。月移動は今月なら「今月に追従」状態に戻す。calendar-view.js のプリキャッシュ漏れをユニットとオフライン E2E が検出 → 追加、sw.js VERSION=4
 - 申し送り: 次はキーボード操作（矢印・PageUp/PageDown）とアクセシビリティ・タップ領域の E2E
+
+## 2026-11-26 機能追加7-3: カレンダーのキーボード操作・アクセシビリティ — 完了
+- やったこと: calendar.spec にキーボード操作（roving tabindex、矢印 ±1/±7 日、未来へは移動しない、月の境目で隣の月へ、PageUp/PageDown、1/31→2/29 の丸め）、a11y.spec にタップ領域（マス・月移動ボタン 44px 以上）、dark-mode.spec にカレンダー文字のコントラストを追加 → calendar-view.js に実装。月末丸めの不具合（存在しない日付で例外）をテストで先に再現してから修正
+- README・HUMAN_TODO を更新。`bash scripts/verify.sh` → VERIFY: PASS（ユニット148件・E2E 184件）
+- 公開サイトへの反映は人間の `git push` が必要
