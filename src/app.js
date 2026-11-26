@@ -13,6 +13,7 @@ const WEEKDAYS = ['日', '月', '火', '水', '木', '金', '土'];
 const STATUS_TEXT = {
   [STATUS.NONE]: 'まだ記録していません',
   [STATUS.DONE]: '今日は「出た」',
+  [STATUS.LITTLE]: '今日は「ちょっと出た」',
 };
 
 const $ = (id) => document.getElementById(id);
@@ -36,6 +37,7 @@ function render() {
   document.querySelector('[data-testid="today"]').textContent = formatToday(new Date());
   document.querySelector('[data-testid="today-status"]').textContent = STATUS_TEXT[status];
   $('btn-done').setAttribute('aria-pressed', String(status === STATUS.DONE));
+  $('btn-little').setAttribute('aria-pressed', String(status === STATUS.LITTLE));
   $('btn-clear-today').hidden = status === STATUS.NONE;
 
   const since = daysSinceLastDone(state.records, key);
@@ -99,9 +101,10 @@ dayDialog.addEventListener('close', () => {
 
 // 押下時の演出（見た目だけ。読み上げは状態テキストで行う）
 let celebrationTimer;
-function celebrate() {
+function celebrate(status) {
   const fx = document.querySelector('[data-testid="celebration"]');
-  fx.querySelector('.celebration-text').textContent = 'すっきり！';
+  fx.querySelector('.celebration-text').textContent = status === STATUS.LITTLE ? 'ちょっとすっきり' : 'すっきり！';
+  fx.classList.toggle('is-quiet', status === STATUS.LITTLE);
   fx.hidden = true;
   void fx.offsetWidth; // アニメーションを最初から再生し直す
   fx.hidden = false;
@@ -111,13 +114,14 @@ function celebrate() {
   }, 1500);
 }
 
-function recordToday() {
-  persist({ ...state, records: setStatus(state.records, todayKey(), STATUS.DONE) });
+function recordToday(status) {
+  persist({ ...state, records: setStatus(state.records, todayKey(), status) });
   render();
-  celebrate();
+  celebrate(status);
 }
 
-$('btn-done').addEventListener('click', recordToday);
+$('btn-done').addEventListener('click', () => recordToday(STATUS.DONE));
+$('btn-little').addEventListener('click', () => recordToday(STATUS.LITTLE));
 $('btn-clear-today').addEventListener('click', () => {
   persist({ ...state, records: clearStatus(state.records, todayKey()) });
   render();

@@ -40,7 +40,7 @@ async function contrastOf(page, selector) {
 }
 
 const TEXT_SELECTORS = [
-  '.app-title', '.today', '.today-status', '#btn-done', '.since', '.hint',
+  '.app-title', '.today', '.today-status', '#btn-done', '#btn-little', '.since', '.hint',
   '.calendar-title', '.calendar-summary', '.calendar-weekdays span', '.cal-day[data-status="0"]:not(:disabled)', '.cal-day[data-status="1"]',
   '.install-banner p', '.reminder p', '.legend li', '#export-text', '.field-label', '#btn-copy', '.muted', '#btn-clear-today',
 ];

@@ -244,3 +244,6 @@
 ## 2026-11-26 機能追加8-1: 「ちょっと出た」のロジック
 - やったこと: records（STATUS.LITTLE=3、isValidStatus、normalizeRecords、設定・上書き）、コーデック（2bit=3 を「ちょっと出た」として往復）、storage（3 を保持）、since（起点に含める）、month-calendar（状態保持・littleCount）、heatmap（3 は保持・2 は未記録）のテストを先に更新 Red 10件 → 実装して Green（ユニット155件、E2E 194件は変更なしで pass）
 - 判断: 形式 v1 のまま値 3 を割り当て（旧バックアップとも互換）。onlyDone は normalizeRecords に改名（isRecorded を追加）。仕様変更前のヒートマップのテスト1件（2 をそのまま返す期待）は現仕様（未記録扱い）に合わせて修正
+
+## 2026-11-26 機能追加8-2: ホームの「ちょっと出た」
+- やったこと: `tests/e2e/little.spec.js`（5件×2: 記録と保持、付け替えと取り消し、演出「ちょっとすっきり」、N日の起点、「出た」より小さい）と a11y・dark-mode に #btn-little を追加（Red）→ index.html にボタン、app.js で状態テキスト・aria-pressed・演出の出し分け、CSS（--little-bg/--little-text をライト／ダークで定義、粒は少なめ）で Green

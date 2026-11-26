@@ -108,7 +108,7 @@ test('キーボードフォーカスが見える（outline がある）', async 
 test('主要な操作部品のタップ領域は 44px 以上', async ({ page }) => {
   await page.goto('/');
   await page.getByRole('button', { name: '出た', exact: true }).click();
-  const selectors = ['.cal-day:not(:disabled)', '.calendar-nav-btn', '#btn-done', '#btn-clear-today', '#btn-copy', '#btn-import', '.app-footer a', '.install-guide summary', '.qr-details summary', '.device-change summary'];
+  const selectors = ['.cal-day:not(:disabled)', '.calendar-nav-btn', '#btn-done', '#btn-little', '#btn-clear-today', '#btn-copy', '#btn-import', '.app-footer a', '.install-guide summary', '.qr-details summary', '.device-change summary'];
   for (const sel of selectors) {
     const boxes = await page.locator(sel).evaluateAll((els) => els.map((el) => el.getBoundingClientRect()).map((r) => [r.width, r.height]));
     expect(boxes.length, sel).toBeGreaterThan(0);
