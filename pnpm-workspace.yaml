@@ -1,0 +1,10 @@
+# 依存のサプライチェーン対策（pnpm 設定）
+# 公開から7日未満のバージョンは解決しない（乗っ取られたリリースを掴みにくくする）
+minimumReleaseAge: 10080
+# 推移的依存が git / tarball URL など registry 外を参照することを禁止
+blockExoticSubdeps: true
+# 推移的依存のバージョンアップで信頼レベル（provenance 等）が下がるものを拒否
+trustPolicy: no-downgrade
+# postinstall などのビルドスクリプトは原則実行しない（許可リスト方式）
+strictDepBuilds: true
+onlyBuiltDependencies: []

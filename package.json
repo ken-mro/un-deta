@@ -1,0 +1,17 @@
+{
+  "name": "un-deta",
+  "version": "0.1.0",
+  "private": true,
+  "description": "うん、出た。— 出たかどうかだけを1タップで記録する日記PWA",
+  "type": "module",
+  "packageManager": "pnpm@11.1.2",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test 'tests/unit/**/*.test.js'",
+    "test:e2e": "playwright test",
+    "serve": "node scripts/serve.mjs"
+  },
+  "devDependencies": {}
+}

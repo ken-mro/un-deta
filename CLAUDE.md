@@ -29,6 +29,13 @@
 - アプリ本体からの外部リクエスト（CDN、フォント、解析ツールなど）
 - 効能をうたう表現
 
+## 依存パッケージとセキュリティ
+- パッケージマネージャは pnpm（`packageManager` 固定、ロックファイルは `pnpm-lock.yaml`）。`npm install` / `npx <未導入パッケージ>` で依存を追加しない（`package-lock.json` を作らない）
+- 依存の追加・更新はループ内では行わない。必要なら理由を `HUMAN_TODO.md` に書き、自前実装で進められるなら自前実装する（QR 生成なども原則自前）
+- `.npmrc` / `pnpm-workspace.yaml` のセキュリティ設定（ignore-scripts、minimumReleaseAge など）を弱めない
+- テスト・配信用スクリプト（`scripts/serve.mjs` など）も安全に書く: パストラバーサル防止、`127.0.0.1` のみで待ち受け
+- アプリ本体: `innerHTML` に外部入力（バックアップ文字列など）を入れない、`eval` / `new Function` 禁止、CSP メタタグで `default-src 'self'`
+
 ## 詰まったとき
 - 同じタスクで2回連続失敗したら、原因と試したことを `PROGRESS.md` と `HUMAN_TODO.md` に書き、そのタスクに `（要確認）` を付けて次のタスクへ進む
 - 人間の判断が必須（法的判断、問い合わせ先など）の項目は、プレースホルダで進めて HUMAN_TODO.md に記録する。止まらない
