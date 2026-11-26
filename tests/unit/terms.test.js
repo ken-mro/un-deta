@@ -57,3 +57,8 @@ test('記録するのは「出た」だけ（仕様変更）: 「出てない」
   assert.doesNotMatch(text, /出てない/);
   assert.match(text, /「出た」/);
 });
+
+test('規約の変更: 変更内容と効力発生日を事前に周知する（民法548条の4）', () => {
+  assert.match(text, /効力発生日/);
+  assert.match(text, /利用者の一般の利益に適合する場合|変更の必要性/);
+});

@@ -206,3 +206,8 @@
 ## 2026-11-26 仕様変更6-6: 最終確認 — 完了
 - `bash scripts/verify.sh` → VERIFY: PASS（ユニット140件・E2E 156件）。`pnpm audit` 既知の脆弱性なし。sw.js VERSION=2
 - 残り: HUMAN_TODO.md（SPEC.md の更新、規約の確認、実機確認、GitHub Pages 公開）
+
+## 2026-11-26 公開準備: SPEC 更新版・規約の再点検・リポジトリ作成
+- SPEC.md は設定で編集不可のため、PLAN 6章を反映した `SPEC.updated.md` を作成（人間が SPEC.md に置き換える）
+- 規約の再点検: 「規約の変更」を民法548条の4（定型約款の変更: 変更の旨・内容・効力発生日の事前周知、利益適合性または合理性）に沿う文言に修正（テスト追加）。sw.js VERSION=3
+- GitHub に公開リポジトリ ken-mro/un-deta を作成（push は設定で禁止のため人間が実施）。追跡ファイルの秘密情報スキャン済み
