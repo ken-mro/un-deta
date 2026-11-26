@@ -14,7 +14,8 @@ function sanitizeRecords(raw) {
   if (raw && typeof raw === 'object' && !Array.isArray(raw)) {
     for (const k of Object.keys(raw)) {
       const v = raw[k];
-      if (isValidDateKey(k) && (v === STATUS.DONE || v === STATUS.NOT_YET)) out[k] = v;
+      // 仕様変更により「出た」だけを記録する。旧データの「出てない」(2) は未記録として扱う
+      if (isValidDateKey(k) && v === STATUS.DONE) out[k] = v;
     }
   }
   return Object.freeze(out);

@@ -53,3 +53,11 @@ test('不正な日付キー・状態値は例外（ストアを壊さない）',
   assert.equal(isValidStatus(2), true);
   assert.equal(isValidStatus(-1), false);
 });
+
+test('onlyDone: 「出た」だけを残す（旧データ・読み込みデータの「出てない」は未記録として扱う）', async () => {
+  const { onlyDone } = await import('../../src/lib/records.js');
+  const r = onlyDone({ '2024-01-01': STATUS.DONE, '2024-01-02': STATUS.NOT_YET, '2024-01-03': STATUS.DONE });
+  assert.deepEqual({ ...r }, { '2024-01-01': STATUS.DONE, '2024-01-03': STATUS.DONE });
+  assert.ok(Object.isFrozen(r));
+  assert.deepEqual({ ...onlyDone({}) }, {});
+});

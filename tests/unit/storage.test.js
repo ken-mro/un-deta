@@ -28,7 +28,7 @@ test('初回は既定値', () => {
 test('保存して読み戻せる（記録・最終バックアップ日・催促を閉じた日）', () => {
   const mem = memoryStorage();
   const s = createStorage(mem);
-  const records = setStatus(setStatus(emptyRecords(), '2024-01-01', STATUS.DONE), '2024-01-02', STATUS.NOT_YET);
+  const records = setStatus(setStatus(emptyRecords(), '2024-01-01', STATUS.DONE), '2024-01-02', STATUS.DONE);
   assert.equal(s.save({ records, lastBackupKey: '2024-01-02', dismissedKey: null }), true);
   const loaded = createStorage(mem).load();
   assert.deepEqual(loaded, { records: { ...records }, lastBackupKey: '2024-01-02', dismissedKey: null });
@@ -44,6 +44,12 @@ test('壊れた JSON や想定外の値は既定値／不正な日だけ捨て�
   assert.deepEqual(createStorage(mem).load(), DEFAULT);
   mem.setItem(STORAGE_KEY, JSON.stringify({ v: 1, records: { '2024-01-01': 1, '2024-02-30': 1, '2024-01-03': 3, __proto__x: 2, '2024-01-04': '2' }, lastBackupKey: 'x', dismissedKey: '2024-01-05' }));
   assert.deepEqual(createStorage(mem).load(), { records: { '2024-01-01': 1 }, lastBackupKey: null, dismissedKey: '2024-01-05' });
+});
+
+test('保存データ中の「出てない」(2) は未記録として読み込む（仕様変更: 「出た」だけを記録）', () => {
+  const mem = memoryStorage();
+  mem.setItem(STORAGE_KEY, JSON.stringify({ v: 1, records: { '2024-01-01': 1, '2024-01-02': 2 } }));
+  assert.deepEqual(createStorage(mem).load().records, { '2024-01-01': 1 });
 });
 
 test('__proto__ を含む保存値でもプロトタイプ汚染しない', () => {

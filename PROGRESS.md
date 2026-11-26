@@ -177,3 +177,9 @@
 - 追加したこと: 起動時の persist() 呼び出しを E2E で確認（ミューテーション確認済み）
 - 最終結果: `bash scripts/verify.sh` → VERIFY: PASS（ユニット137件・E2E 152件）。`pnpm audit` 既知の脆弱性なし
 - 完了。残りは HUMAN_TODO.md（{{CONTACT}} 差し替え、規約の専門家確認、実機確認、GitHub Pages 公開）
+
+## 2026-11-26 仕様変更6-1: ロジック（「出た」だけを記録）
+- 経緯: ユーザーがチャットで「『出てない』は記録しない（案1）」と決定。SPEC.md は設定で編集不可のため PLAN.md 6章に変更内容を記録（SPEC.md 本体の更新は人間に依頼）
+- やったこと: `tests/unit/since.test.js`（6件）、records の onlyDone、storage の「出てない」除外テストを先に書き Red → `src/lib/since.js`（daysSinceLastDone）、`onlyDone`、storage の正規化で Green。「出てない」連続日数（streak.js とそのテスト）は仕様から外れたため削除。sw.js の PRECACHE も追従（ユニット136件）
+- 判断: バックアップ形式 v1（2bit）は互換のため据え置き。STATUS.NOT_YET 定数はコーデック互換用に残す
+- 申し送り: app.js がまだ streak.js を import しているので、次のホームのタスクで直す（このコミット単体では E2E が落ちる）

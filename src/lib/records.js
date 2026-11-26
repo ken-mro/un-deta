@@ -33,3 +33,10 @@ export function clearStatus(records, key) {
 
 /** 記録済み（出た／出てない）の日数 */
 export const countRecords = (records) => Object.keys(records).length;
+
+/** 「出た」だけを残す（仕様変更により「出てない」は記録しない。旧データ・読み込みデータは未記録として扱う） */
+export function onlyDone(records) {
+  const out = {};
+  for (const k of Object.keys(records)) if (records[k] === STATUS.DONE) out[k] = STATUS.DONE;
+  return Object.freeze(out);
+}
