@@ -145,3 +145,8 @@
 - やったこと: `tests/unit/human-todo.test.js`（{{CONTACT}} を含む全配布ファイルが列挙されていること、主要確認事項。Red）→ `HUMAN_TODO.md` を作成して Green（ユニット129件）
 - 判断: 公開前必須（{{CONTACT}} 差し替え＋sw.js VERSION 更新、規約・ポリシーの専門家確認：合意管轄・免責・制定日）、実機確認、GitHub Pages 公開、依存保守（pnpm audit/outdated、pnpm 12 検討、loop.sh の扱い）に分類
 - 申し送り: 次は「規約・ポリシーの記述と実装の整合を確認するテスト」
+
+## 2026-11-26 タスク4-4: 規約・ポリシーと実装の整合テスト
+- やったこと: `tests/e2e/policy-consistency.spec.js`（5件×2）。一通り操作（記録・過去日修正・QR・読み込み）したあと、Cookie なし、保存は localStorage の un-deta:v1 のみ（sessionStorage・IndexedDB なし）、SW キャッシュは同一オリジンのアプリファイルのみでクエリ／記録データなし、通信は同一オリジンの GET のみでクエリなし、読み込むスクリプトは ./src/ のみ、を確認（E2E 126件）
+- 判断: 実装が既に整合していたため初回 pass。検出力の確認として app.js に一時的に document.cookie を追加し失敗すること（ミューテーション確認）を見てから戻した。必須見出し・キーワードはユニット（terms/privacy.test.js）で担保済み
+- 申し送り: 次は PLAN 5（アクセシビリティ E2E）。注意: E2E の seed() は sessionStorage を使うので、このファイルでは seed しないこと
