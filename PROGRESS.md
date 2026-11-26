@@ -69,3 +69,8 @@
 - やったこと: `tests/e2e/feedback.spec.js`（4件×2、Red）→ ポップ表示「すっきり！」＋粒の飛散（出てない は「また明日〜」で粒なし）を CSS アニメーションで実装（E2E 24件 pass）
 - 判断: 演出要素は aria-hidden（読み上げは状態テキスト）。1.5秒で非表示、連打時はタイマーを張り直してアニメを再生し直す。prefers-reduced-motion: reduce では全アニメーション・トランジションを無効化し、文言だけ静的に表示
 - 申し送り: 新しいアニメーションを足すときも reduced-motion の一括無効化に乗る（!important）
+
+## 2026-11-26 タスク2-3: 連続日数表示
+- やったこと: `tests/e2e/streak.spec.js`（3件×2、Red）と共通ヘルパー `tests/e2e/helpers.js`（seed / fixToday / readSaved）→ ホームに「『出てない』が N日 続いています」を表示（E2E 30件 pass）
+- 判断: 0日のときは非表示（毎日見て気にならないように）。計算は src/lib/streak.js をそのまま使用
+- 申し送り: seed() は sessionStorage フラグで初回のみ仕込むので、reload を跨ぐテストでも使える

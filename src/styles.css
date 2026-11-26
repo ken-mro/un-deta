@@ -233,3 +233,14 @@ button {
     transform: none;
   }
 }
+
+/* ---- 連続日数 ---- */
+.streak {
+  margin: 1.25rem 0 0;
+  color: var(--text-muted);
+}
+
+.streak-count {
+  color: var(--text);
+  font-size: 1.25rem;
+}

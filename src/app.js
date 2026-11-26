@@ -1,6 +1,7 @@
 // アプリのエントリポイント（DOM 操作）。ロジックは src/lib/ の純粋関数に置く。
 import { toDateKey } from './lib/date.js';
 import { STATUS, getStatus, setStatus, clearStatus } from './lib/records.js';
+import { notYetStreak } from './lib/streak.js';
 import { createStorage, getLocalStorage, requestPersist } from './lib/storage.js';
 
 const WEEKDAYS = ['日', '月', '火', '水', '木', '金', '土'];
@@ -33,6 +34,11 @@ function render() {
   $('btn-done').setAttribute('aria-pressed', String(status === STATUS.DONE));
   $('btn-not-yet').setAttribute('aria-pressed', String(status === STATUS.NOT_YET));
   $('btn-clear-today').hidden = status === STATUS.NONE;
+
+  const streak = notYetStreak(state.records, key);
+  const streakEl = document.querySelector('[data-testid="streak"]');
+  streakEl.hidden = streak === 0;
+  streakEl.querySelector('.streak-count').textContent = `${streak}日`;
 }
 
 // 押下時の演出（見た目だけ。読み上げは状態テキストで行う）
