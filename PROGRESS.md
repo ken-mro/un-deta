@@ -202,3 +202,7 @@
 ## 2026-11-26 仕様変更6-5: 規約・ポリシー・README と問い合わせ先
 - やったこと: terms / privacy / readme / human-todo のテストを先に更新（{{CONTACT}} が残っていない・mailto リンク、「出てない」を記録する記述なし、README は「前回の『出た』から」、HUMAN_TODO で問い合わせ先は完了・SPEC.md 更新を依頼。Red 7件）→ 各文書を更新して Green（ユニット140件）
 - 判断: 問い合わせ先はユーザー指定の bacon.dev.6396@gmail.com を mailto リンクで掲載（公開ページに載る旨と迷惑メールの可能性を HUMAN_TODO に注記）。sw.js の VERSION を 2 に。SPEC.md の差し替え内容を HUMAN_TODO に具体的に列挙
+
+## 2026-11-26 仕様変更6-6: 最終確認 — 完了
+- `bash scripts/verify.sh` → VERIFY: PASS（ユニット140件・E2E 156件）。`pnpm audit` 既知の脆弱性なし。sw.js VERSION=2
+- 残り: HUMAN_TODO.md（SPEC.md の更新、規約の確認、実機確認、GitHub Pages 公開）
