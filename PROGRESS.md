@@ -79,3 +79,8 @@
 - やったこと: レイアウトの純粋関数 `src/lib/heatmap.js`（buildHeatmap / dayOfWeek、ユニット6件）と E2E `tests/e2e/heatmap.spec.js`（7件×2）を先に書き Red → `src/ui/heatmap-view.js` と `<dialog>` で Green（ユニット86件・E2E 44件 pass）
 - 判断: 今日を含む365日、日曜始まりの週列。セルは button（aria-label「2024年3月9日（土） 出た」）、roving tabindex で Tab 1回・矢印で ±1日/±7日・Home/End。出てない は枠線表示で色以外でも区別。修正は showModal ダイアログ（出た／出てない／記録を消す／キャンセル、Esc で閉じる）、閉じたらセルにフォーカスを戻す。DOM は createElement で構築（innerHTML 不使用）、style は CSSOM 経由なので CSP style-src 'self' に抵触しない
 - 申し送り: 初期表示で右端（今日）へスクロール。曜日ラベルはスクロールで隠れる（必要なら sticky 化）
+
+## 2026-11-26 タスク2-5: ホーム画面追加の警告と OS 別案内
+- やったこと: `tests/e2e/install-guide.spec.js`（UA を iPhone/Android/Windows に切替、standalone は matchMedia を差し替えて再現。Red）→ index.html に警告バナー＋`<details>` の手順、app.js で detectPlatform により出し分け（E2E 54件 pass）
+- 判断: standalone なら非表示。警告文「このままだと記録が消える可能性があります」。手順は折りたたみで、該当 OS 以外の手順は DOM から削除（textContent に混ざらないように）。iOS は Safari で開く旨も案内。PC は一般的な案内＋こまめなバックアップを促す
+- 申し送り: 「下の『バックアップ』」と案内しているので、バックアップ画面はホームの下部に置くこと

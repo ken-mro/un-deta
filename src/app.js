@@ -3,6 +3,7 @@ import { toDateKey } from './lib/date.js';
 import { STATUS, getStatus, setStatus, clearStatus } from './lib/records.js';
 import { notYetStreak } from './lib/streak.js';
 import { createHeatmapView, formatDateJa } from './ui/heatmap-view.js';
+import { detectPlatform } from './lib/platform.js';
 import { createStorage, getLocalStorage, requestPersist } from './lib/storage.js';
 
 const WEEKDAYS = ['日', '月', '火', '水', '木', '金', '土'];
@@ -107,6 +108,24 @@ document.addEventListener('visibilitychange', () => {
   }
 });
 
+// ---- ホーム画面に追加していないときの警告と案内 ----
+function setupInstallBanner() {
+  const { os, standalone } = detectPlatform({
+    userAgent: navigator.userAgent,
+    maxTouchPoints: navigator.maxTouchPoints,
+    displayModeStandalone: window.matchMedia?.('(display-mode: standalone)').matches === true,
+    navigatorStandalone: navigator.standalone === true,
+  });
+  $('install-banner').hidden = standalone;
+  document.querySelector('[data-testid="install-guide"]').dataset.os = os;
+  // 該当しない OS の手順は取り除く（読み上げや検索で混ざらないように）
+  document.querySelectorAll('[data-guide-os]').forEach((ol) => {
+    if (ol.dataset.guideOs === os) ol.hidden = false;
+    else ol.remove();
+  });
+}
+
+setupInstallBanner();
 render();
 heatmap.scrollToEnd();
 requestPersist();

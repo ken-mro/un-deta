@@ -17,6 +17,31 @@
   </header>
 
   <main class="app-main">
+    <section class="install-banner" id="install-banner" aria-labelledby="install-heading" hidden>
+      <h2 id="install-heading">ホーム画面に追加してください</h2>
+      <p><strong>このままだと記録が消える可能性があります。</strong>ブラウザは、しばらく開かなかったサイトのデータを自動で削除することがあります。ホーム画面に追加して、そこから開いて使ってください。</p>
+      <details class="install-guide" data-testid="install-guide" data-os="other">
+        <summary>追加のしかた</summary>
+        <ol data-guide-os="ios" hidden>
+          <li>このページを <strong>Safari</strong> で開きます（ほかのアプリの中のブラウザでは追加できないことがあります）。</li>
+          <li>画面下（iPad は右上）の<strong>共有</strong>ボタン（四角から矢印が出ているアイコン）を押します。</li>
+          <li>メニューを下へスクロールして<strong>「ホーム画面に追加」</strong>を選び、「追加」を押します。</li>
+          <li>以後は、ホーム画面の「うん、出た。」アイコンから開いてください。</li>
+        </ol>
+        <ol data-guide-os="android" hidden>
+          <li>このページを <strong>Chrome</strong> で開きます。</li>
+          <li>右上の<strong>メニュー</strong>（︙）を押します。</li>
+          <li><strong>「ホーム画面に追加」</strong>または<strong>「アプリをインストール」</strong>を選び、画面の案内に従って追加します。</li>
+          <li>以後は、ホーム画面の「うん、出た。」アイコンから開いてください。</li>
+        </ol>
+        <ol data-guide-os="other" hidden>
+          <li>スマートフォンで開いて、ホーム画面に追加して使うのがおすすめです。</li>
+          <li>パソコンの Chrome / Edge では、アドレスバー右側のインストールアイコン、またはメニューの「アプリをインストール」から追加できます。</li>
+          <li>追加できない環境では、こまめにバックアップ（下の「バックアップ」）をとってください。</li>
+        </ol>
+      </details>
+    </section>
+
     <section class="record" aria-labelledby="record-heading">
       <h2 id="record-heading" class="visually-hidden">今日の記録</h2>
       <p class="today-status" data-testid="today-status" role="status" aria-live="polite"></p>
