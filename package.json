@@ -13,5 +13,7 @@
     "test:e2e": "playwright test",
     "serve": "node scripts/serve.mjs"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@playwright/test": "1.65.1"
+  }
 }
