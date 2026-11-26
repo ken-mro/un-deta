@@ -8,7 +8,7 @@ async function useEverything(page) {
   await page.goto('/');
   await page.getByRole('button', { name: '出た', exact: true }).click();
   await page.locator('[data-date]').nth(300).click();
-  await page.getByRole('dialog').getByRole('button', { name: '出てない', exact: true }).click();
+  await page.getByRole('dialog').getByRole('button', { name: '出た', exact: true }).click();
   await page.getByText('QRコードで表示').click();
   const section = page.getByRole('region', { name: 'バックアップ' });
   await section.getByLabel('バックアップの文字列を貼り付け').fill(await section.getByLabel('バックアップ用の文字列').inputValue());

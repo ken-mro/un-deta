@@ -4,7 +4,7 @@ import { buildHeatmap } from '../lib/heatmap.js';
 import { STATUS } from '../lib/records.js';
 
 const WEEKDAYS = ['日', '月', '火', '水', '木', '金', '土'];
-const STATUS_LABEL = { [STATUS.NONE]: '未記録', [STATUS.DONE]: '出た', [STATUS.NOT_YET]: '出てない' };
+const STATUS_LABEL = { [STATUS.NONE]: '未記録', [STATUS.DONE]: '出た' };
 
 export function formatDateJa(key) {
   const d = parseDateKey(key);

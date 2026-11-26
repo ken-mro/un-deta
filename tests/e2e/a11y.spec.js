@@ -62,11 +62,11 @@ test('キーボードだけで過去の日を修正できる（ダイアログ�
   expect(await dialog.evaluate((d) => d.contains(document.activeElement))).toBe(true);
   await page.keyboard.press(tabKey(browserName));
   expect(await dialog.evaluate((d) => d.contains(document.activeElement)), 'Tab してもダイアログ内').toBe(true);
-  await dialog.getByRole('button', { name: '出てない', exact: true }).focus();
+  await dialog.getByRole('button', { name: '出た', exact: true }).focus();
   await page.keyboard.press('Enter');
   await expect(dialog).toBeHidden();
   await expect(page.locator('[data-date="2024-03-09"]')).toBeFocused();
-  await expect(page.locator('[data-date="2024-03-09"]')).toHaveAttribute('data-status', '2');
+  await expect(page.locator('[data-date="2024-03-09"]')).toHaveAttribute('data-status', '1');
 });
 
 test('キーボードだけでバックアップを読み込める', async ({ page, browserName }) => {

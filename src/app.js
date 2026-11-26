@@ -63,7 +63,7 @@ $('btn-reminder-later').addEventListener('click', () => {
 });
 
 // ---- ヒートマップと日付ごとの修正 ----
-const STATUS_NAME = { [STATUS.NONE]: '未記録', [STATUS.DONE]: '出た', [STATUS.NOT_YET]: '出てない' };
+const STATUS_NAME = { [STATUS.NONE]: '未記録', [STATUS.DONE]: '出た' };
 const dayDialog = $('day-dialog');
 let editingDate = null;
 

@@ -188,3 +188,8 @@
 - やったこと: E2E を先に更新（home: 「出てない」ボタンがないこと、since.spec 新設＝「前回の『出た』から N日」、feedback・a11y・dark-mode の「出てない」依存を除去。streak.spec は削除）→ index.html から「出てない」ボタン削除、app.js を daysSinceLastDone に切替、演出は「すっきり！」のみ（関連 E2E 70件 pass）
 - 判断: N=0（今日出た）と記録なしは非表示。a11y のキーボード操作は「出た」→「今日の記録を取り消す」で確認
 - 申し送り: heatmap / backup / qr の E2E は「出てない」(2) を含むデータを使っているため現在失敗中。次のタスク（ヒートマップ）とその次（バックアップ）で直す
+
+## 2026-11-26 仕様変更6-3: ヒートマップと修正ダイアログ
+- やったこと: heatmap.spec を先に更新（旧データの 2 は未記録表示、ダイアログに「出てない」がない、「出た」記録で日数表示が更新、凡例は2つ）、a11y / policy-consistency / no-external のダイアログ操作を「出た」に → index.html・heatmap-view・app.js・CSS から「出てない」を除去して Green
+- 判断: 「出てない」用の枠線スタイルと --cell-not-yet を削除。ボタン用クラス .btn-not-yet は読み込みダイアログでも使うため .btn-pill に改名
+- 申し送り: backup / qr の E2E が残り（次のタスク）
