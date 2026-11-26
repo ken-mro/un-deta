@@ -5,6 +5,7 @@ import { notYetStreak } from './lib/streak.js';
 import { createHeatmapView, formatDateJa } from './ui/heatmap-view.js';
 import { detectPlatform } from './lib/platform.js';
 import { createBackupView } from './ui/backup-view.js';
+import { shouldRemindBackup } from './lib/backup-reminder.js';
 import { createStorage, getLocalStorage, requestPersist } from './lib/storage.js';
 
 const WEEKDAYS = ['日', '月', '火', '水', '木', '金', '土'];
@@ -45,7 +46,23 @@ function render() {
 
   heatmap.render(state.records, key);
   backupView.render();
+
+  $('backup-reminder').hidden = !shouldRemindBackup({ ...state, todayKey: key });
+  $('reminder-text').textContent = state.lastBackupKey
+    ? '最後のバックアップから30日以上たちました。端末の故障や機種変更にそなえて、記録を書き出しておきませんか。'
+    : 'まだ一度もバックアップしていません。端末の故障や機種変更にそなえて、記録を書き出しておきませんか。';
 }
+
+// ---- バックアップ催促 ----
+$('btn-reminder-go').addEventListener('click', () => {
+  const copy = $('btn-copy');
+  copy.scrollIntoView({ block: 'center', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+  copy.focus({ preventScroll: true });
+});
+$('btn-reminder-later').addEventListener('click', () => {
+  persist({ ...state, dismissedKey: todayKey() });
+  render();
+});
 
 // ---- ヒートマップと日付ごとの修正 ----
 const STATUS_NAME = { [STATUS.NONE]: '未記録', [STATUS.DONE]: '出た', [STATUS.NOT_YET]: '出てない' };

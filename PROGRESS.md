@@ -100,3 +100,8 @@
 - やったこと: `tests/e2e/device-change.spec.js`（2件×2、Red）→ バックアップ節に `<details>`「機種変更するときは」（4ステップ＋iPhone の注意）を追加（E2E 82件 pass）
 - 判断: 手順は「今の端末でコピー → 新しい端末でホーム画面に追加 → ホーム画面のアイコンから開く → 貼り付けて読み込む」。iOS は Safari とホーム画面アプリで保存場所が別々で、QR を Safari で開いても反映されない旨を明記。既存テストの getByText('追加のしかた') と衝突しない文言にした
 - 申し送り: 次はバックアップ催促の表示（src/lib/backup-reminder.js を使用、dismissedKey を保存）
+
+## 2026-11-26 タスク2-9: バックアップ催促の表示
+- やったこと: `tests/e2e/backup-reminder.spec.js`（5件×2、Red）→ ホーム上部に「バックアップしておく？」節（バックアップする／あとで）を追加し、render() で shouldRemindBackup により表示切替（E2E 92件 pass）
+- 判断: 「バックアップする」はコピーボタンへスクロール＆フォーカス（reduced-motion では smooth スクロールしない）。「あとで」で dismissedKey=今日を保存。コピー成功で lastBackupKey が更新され自動で消える。文言はバックアップ未実施／30日経過で出し分け
+- 申し送り: 次はダークモード。色はすべて :root の CSS 変数に寄せてあるので、prefers-color-scheme: dark で上書きする
