@@ -216,3 +216,7 @@
 - 人間が SPEC.md を置き換えて push（2467269）。エージェントが `gh api` で GitHub Pages（main / root）を有効化し、ビルド成功
 - 公開 URL https://ken-mro.github.io/un-deta/ をブラウザで確認: 起動、365日のヒートマップ、SW スコープ /un-deta/ で activated・制御下、外部リクエスト0件、manifest・アイコン5種・terms・privacy が 200（問い合わせ先 mailto あり、{{CONTACT}} なし、SW VERSION=3）、記録→再読み込みで保持→取り消し（確認後に記録は削除）
 - human-todo テストを「SPEC 反映済み」に更新。残りの HUMAN_TODO: 規約・ポリシーの専門家確認、実機確認、依存の保守
+
+## 2026-11-26 機能追加7-1: 月のカレンダーのロジック
+- やったこと: `tests/unit/month-calendar.test.js`（7件、Red）→ `src/lib/month-calendar.js`（isValidMonthKey / monthOf / addMonths / buildMonthCalendar）で Green。sw.js の PRECACHE に追加（ユニット148件）
+- 判断: 日曜始まり、前後の空白は null。セルは date/day/status/isToday/isFuture。「出た」日数は今日以前のその月だけ。旧データの 2 は未記録。canGoNext は今月より前のときだけ

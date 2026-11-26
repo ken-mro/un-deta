@@ -16,6 +16,7 @@ const PRECACHE = [
   './src/lib/date.js',
   './src/lib/heatmap.js',
   './src/lib/import-merge.js',
+  './src/lib/month-calendar.js',
   './src/lib/platform.js',
   './src/lib/qr.js',
   './src/lib/records.js',
