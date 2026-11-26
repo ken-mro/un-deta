@@ -160,3 +160,8 @@
 - やったこと: `tests/e2e/no-external.spec.js`（context.route で同一オリジン以外を記録・遮断、context の request 監視、CSP 違反イベントとコンソールの Refused も収集）で全ページ・全機能を操作して 0 件を確認。静的チェック `tests/unit/no-external-refs.test.js`（配布ファイル中の外部 URL は SVG 名前空間と privacy.html の GitHub リンクのみ、CSS の外部 url()/@import なし）も追加（ユニット132件・E2E 146件）
 - 判断: ミューテーション確認で app.js に外部 fetch を足すと、CSP が送信前に遮断するため通信監視だけでは検出できなかった → securitypolicyviolation も失敗条件に追加し、検出できることを確認してから戻した
 - 申し送り: 次は README.md
+
+## 2026-11-26 タスク5-3: README.md
+- やったこと: `tests/unit/readme.test.js`（必須見出し、実在するコマンド・パス、プライバシー要約、効能表現なし。Red）→ README.md を作成して Green（ユニット137件）
+- 判断: 概要／使い方（ホーム画面追加・記録・修正・バックアップ・機種変更と iOS の注意）／プライバシー要約／ローカル起動（serve.mjs、--base）／テスト（pnpm install、playwright install、npm test、test:e2e、verify.sh、依存のセキュリティ設定、アイコン再生成）／GitHub Pages 手順（{{CONTACT}} 差し替え、Pages 設定、sw.js VERSION）
+- 申し送り: 最後は「最終レビュー」。SPEC.md を1項目ずつ照合する
