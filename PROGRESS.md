@@ -120,3 +120,8 @@
 - やったこと: `tests/unit/pwa-manifest.test.js`（manifest の必須項目・相対パス、PNG 実寸を IHDR で確認、SVG がパスのみ、index.html の link/meta。Red）と `tests/e2e/pwa-assets.spec.js` → `manifest.webmanifest`、`icons/`（icon.svg・icon-maskable.svg と PNG 5種）、`scripts/build-icons.mjs`、index.html の head で Green（ユニット101件・E2E 104件）
 - 判断: アイコンはソフトクリーム型に顔（パスと図形のみ、フォント非依存）。PNG は開発依存の Playwright Chromium で SVG から生成（依存追加なし）。apple-touch-icon は全面塗り（iOS が角丸にする）。theme-color はライト #fbf8f3／ダーク #1b1714、manifest は start_url/scope とも ./
 - 申し送り: アイコンを変えたら `node scripts/build-icons.mjs` で再生成。次は service worker（全アセットのプリキャッシュ、terms/privacy 含む）
+
+## 2026-11-26 タスク3-2: service worker
+- やったこと: `tests/unit/sw-precache.test.js`（プリキャッシュ一覧＝src/・icons/・HTML・manifest の実ファイルと完全一致、相対パス、VERSION、同一オリジン GET のみ）と `tests/e2e/offline.spec.js`（オフライン起動・記録・保持、規約／ポリシー表示、クエリ付き起動）を先に書き Red → `sw.js` と app.js での登録で Green（ユニット105件・E2E 110件、WebKit 含む）
+- 判断: install で cache.addAll（cache:'reload'）→ skipWaiting、activate で旧 `un-deta-*` を削除→ clients.claim。遷移はキャッシュ HTML（ignoreSearch、なければ index.html）、その他は stale-while-revalidate。外部オリジン・GET 以外は触らない。addAll が 404 で失敗しないよう terms.html / privacy.html の下書き（作成中）を先に作成し、中身は PLAN 4 で書く
+- 申し送り: ファイルを追加したら sw.js の PRECACHE に足す（ユニットテストが検知する）。アセット更新時は VERSION を上げる。次はサブパス（/un-deta/）配信の E2E

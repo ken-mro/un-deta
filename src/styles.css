@@ -663,3 +663,24 @@ button {
 .app-footer p {
   margin: 0.25rem 0 0;
 }
+
+/* ---- 規約・ポリシーページ ---- */
+.legal {
+  max-width: 40rem;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 3rem;
+}
+
+.legal a {
+  color: var(--text);
+}
+
+.legal-back {
+  margin: 0 0 1rem;
+}
+
+.legal-back a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+}

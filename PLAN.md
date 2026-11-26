@@ -33,7 +33,7 @@
 
 ## 3. PWA
 - [x] manifest.webmanifest、アイコン一式（SVG から生成した PNG を同梱）、apple-touch-icon、theme-color
-- [ ] service worker: 全アセット（terms.html / privacy.html 含む）をプリキャッシュ。E2E でオフライン時も起動・記録できることを確認
+- [x] service worker: 全アセット（terms.html / privacy.html 含む）をプリキャッシュ。E2E でオフライン時も起動・記録できることを確認
 - [ ] サブパス（/un-deta/）配信でも動くことを E2E で確認（serve.mjs をサブパス対応にしてテスト）
 
 ## 4. 規約・ポリシー

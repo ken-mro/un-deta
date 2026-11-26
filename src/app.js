@@ -158,3 +158,10 @@ setupInstallBanner();
 render();
 heatmap.scrollToEnd();
 requestPersist();
+
+// オフライン動作のための service worker（相対パスなのでサブパス配信でも動く）
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js', { scope: './' }).catch(() => {
+    /* 登録できなくてもアプリは動く */
+  });
+}
