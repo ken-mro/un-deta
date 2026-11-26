@@ -523,3 +523,29 @@ button {
   text-align: left;
   margin: 0.75rem 0 1rem;
 }
+
+/* ---- QR コード ---- */
+.qr-details {
+  margin-top: 0.75rem;
+}
+
+.qr-details summary {
+  cursor: pointer;
+  font-weight: 600;
+  min-height: 2.75rem;
+  display: flex;
+  align-items: center;
+}
+
+.qr-box {
+  width: min(18rem, 100%);
+  margin: 0.5rem auto;
+}
+
+/* QR は暗所・ダークモードでも読み取れるよう常に白地に黒 */
+.qr {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}

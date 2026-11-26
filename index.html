@@ -80,6 +80,11 @@
         <button type="button" class="btn-secondary" id="btn-copy">コピー</button>
         <span class="muted" id="last-backup"></span>
       </div>
+      <details class="qr-details">
+        <summary>QRコードで表示</summary>
+        <div class="qr-box" id="qr-box"></div>
+        <p class="hint" data-testid="qr-note">別の端末のカメラで読み取ると、同じ文字列を取り出せます。取り出した文字列は、その端末の<strong>このアプリの中</strong>で「読み込む」に貼り付けてください（QR を開いただけでは記録は移りません）。</p>
+      </details>
 
       <h3>読み込む</h3>
       <label class="field-label" for="import-text">バックアップの文字列を貼り付け</label>

@@ -3,6 +3,7 @@ import { encodeBackup, decodeBackup, BackupError } from '../lib/backup-codec.js'
 import { analyzeImport, mergeRecords, overwriteRecords } from '../lib/import-merge.js';
 import { countRecords } from '../lib/records.js';
 import { formatDateJa } from './heatmap-view.js';
+import { encodeQR, qrToSvgPath } from '../lib/qr.js';
 
 const $ = (id) => document.getElementById(id);
 
@@ -104,10 +105,45 @@ export function createBackupView({ getState, update, todayKey }) {
     pending = null;
   });
 
+  const SVG_NS = 'http://www.w3.org/2000/svg';
+  let lastQrText = null;
+  function renderQR(text) {
+    if (text === lastQrText) return;
+    lastQrText = text;
+    const box = $('qr-box');
+    let qr;
+    try {
+      qr = encodeQR(text, 'M');
+    } catch {
+      const p = document.createElement('p');
+      p.className = 'hint';
+      p.textContent = '記録が多すぎて QR コードにできません。文字列の「コピー」を使ってください。';
+      box.replaceChildren(p);
+      return;
+    }
+    const n = qr.size + 8;
+    const svg = document.createElementNS(SVG_NS, 'svg');
+    svg.setAttribute('viewBox', `0 0 ${n} ${n}`);
+    svg.setAttribute('role', 'img');
+    svg.setAttribute('aria-label', 'バックアップのQRコード');
+    svg.setAttribute('shape-rendering', 'crispEdges');
+    svg.setAttribute('class', 'qr');
+    const bg = document.createElementNS(SVG_NS, 'rect');
+    bg.setAttribute('width', String(n));
+    bg.setAttribute('height', String(n));
+    bg.setAttribute('fill', '#fff');
+    const path = document.createElementNS(SVG_NS, 'path');
+    path.setAttribute('d', qrToSvgPath(qr.modules));
+    path.setAttribute('fill', '#000');
+    svg.append(bg, path);
+    box.replaceChildren(svg);
+  }
+
   return {
     render() {
       const { records, lastBackupKey } = getState();
       exportText.value = encodeBackup(records);
+      renderQR(exportText.value);
       $('last-backup').textContent = lastBackupKey
         ? `最後のバックアップ: ${formatDateJa(lastBackupKey).replace(/（.）$/, '')}`
         : 'まだバックアップしていません。';
