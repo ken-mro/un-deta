@@ -54,3 +54,8 @@
 - やったこと: `tests/unit/storage.test.js`（8件、Red）→ `src/lib/storage.js`（createStorage / getLocalStorage / requestPersist / STORAGE_KEY）で Green
 - 判断: キー `un-deta:v1` に `{ v, records, lastBackupKey, dismissedKey }` を JSON 保存。読み込み時は検証して不正な日・値を捨てる（`__proto__` でのプロトタイプ汚染なし）。getItem/setItem の例外（SecurityError, QuotaExceeded）や localStorage 自体の取得失敗でも落ちない（load→既定値、save→false）。requestPersist は persisted() 済みなら再要求しない、非対応は 'unsupported'
 - 申し送り: UI は save() が false のとき「保存できませんでした」を表示すること。起動時に requestPersist() を呼ぶ
+
+## 2026-11-26 タスク1-8: プラットフォーム判定
+- やったこと: `tests/unit/platform.test.js`（5件、Red）→ `src/lib/platform.js`（detectOS / isStandalone / detectPlatform）で Green。ロジックフェーズ完了（ユニット 80件）
+- 判断: iPhone/iPad/iPod は ios、Mac を名乗りつつ maxTouchPoints>1 は iPadOS として ios、Android は android、他は other。standalone は display-mode: standalone か navigator.standalone（iOS）
+- 申し送り: 次は UI フェーズ。E2E を先に書く。index.html には CSP メタタグ（default-src 'self'）を入れ、外部入力は textContent で表示すること。効能表現チェックの対象なので index.html / src に「治療」等の語を書かない（免責文は terms.html 側へ）
