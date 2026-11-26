@@ -49,3 +49,8 @@
 - やったこと: `tests/unit/backup-reminder.test.js`（7件、Red）→ `src/lib/backup-reminder.js` の `shouldRemindBackup({ records, lastBackupKey, dismissedKey, todayKey })` で Green
 - 判断: 記録0件なら出さない。起点は「最後のバックアップ日（未実施なら最初の記録日）」と「あとで で閉じた日」の新しい方で、30日以上で表示。保存値が壊れていたら未実施扱い。時計が戻った（起点が未来）場合は出さない
 - 申し送り: UI ではコピー成功時に lastBackupKey、催促を閉じたときに dismissedKey を保存する
+
+## 2026-11-26 タスク1-7: 永続化アダプタ
+- やったこと: `tests/unit/storage.test.js`（8件、Red）→ `src/lib/storage.js`（createStorage / getLocalStorage / requestPersist / STORAGE_KEY）で Green
+- 判断: キー `un-deta:v1` に `{ v, records, lastBackupKey, dismissedKey }` を JSON 保存。読み込み時は検証して不正な日・値を捨てる（`__proto__` でのプロトタイプ汚染なし）。getItem/setItem の例外（SecurityError, QuotaExceeded）や localStorage 自体の取得失敗でも落ちない（load→既定値、save→false）。requestPersist は persisted() 済みなら再要求しない、非対応は 'unsupported'
+- 申し送り: UI は save() が false のとき「保存できませんでした」を表示すること。起動時に requestPersist() を呼ぶ
