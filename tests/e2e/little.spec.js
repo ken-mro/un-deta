@@ -95,3 +95,58 @@ test.describe('カレンダー・ヒートマップ・修正ダイアログ', ()
     await expect(page.getByRole('list', { name: '凡例' }).getByRole('listitem')).toHaveText(['出た', 'ちょっと出た', '未記録']);
   });
 });
+
+test('「ちょっと出た」はバックアップに含まれ、読み込みでも保持される（旧「出てない」は無視）', async ({ page }) => {
+  const { encodeBackup } = await import('../../src/lib/backup-codec.js');
+  await seed(page, { records: { '2024-03-01': 3 } });
+  await page.goto('/');
+  const section = page.getByRole('region', { name: 'バックアップ' });
+  await expect(section.getByLabel('バックアップ用の文字列')).toHaveValue(encodeBackup({ '2024-03-01': 3 }));
+  await section.getByLabel('バックアップの文字列を貼り付け').fill(encodeBackup({ '2024-02-20': 3, '2024-02-21': 2, '2024-02-22': 1 }));
+  await section.getByRole('button', { name: '読み込む' }).click();
+  const dialog = page.getByRole('dialog', { name: 'バックアップの読み込み' });
+  await expect(dialog).toContainText('読み込む記録: 2日分');
+  await dialog.getByRole('button', { name: '統合する' }).click();
+  expect((await readSaved(page)).records).toEqual({ '2024-03-01': 3, '2024-02-20': 3, '2024-02-22': 1 });
+});
+
+test.describe('統合で「出た」と「ちょっと出た」がぶつかる日', () => {
+  const CURRENT = { '2024-03-01': 1, '2024-03-02': 3 };
+  const INCOMING = { '2024-03-01': 3, '2024-02-20': 1 }; // 03-01 が衝突
+
+  async function startMerge(page) {
+    const { encodeBackup } = await import('../../src/lib/backup-codec.js');
+    await seed(page, { records: CURRENT });
+    await page.goto('/');
+    const section = page.getByRole('region', { name: 'バックアップ' });
+    await section.getByLabel('バックアップの文字列を貼り付け').fill(encodeBackup(INCOMING));
+    await section.getByRole('button', { name: '読み込む' }).click();
+    const dialog = page.getByRole('dialog', { name: 'バックアップの読み込み' });
+    await expect(dialog).toContainText('記録が違う日 1日');
+    await dialog.getByRole('button', { name: '統合する' }).click();
+    await expect(dialog).toContainText('記録が違う日が 1日 あります');
+    await expect(dialog).toContainText('今「出た」、読み込む側「ちょっと出た」');
+    return dialog;
+  }
+
+  test('読み込む側を優先するか確認する — 読み込む側を優先', async ({ page }) => {
+    const dialog = await startMerge(page);
+    await dialog.getByRole('button', { name: '読み込む側を優先' }).click();
+    await expect(dialog).toBeHidden();
+    expect((await readSaved(page)).records).toEqual({ ...CURRENT, ...INCOMING });
+  });
+
+  test('今の記録を優先', async ({ page }) => {
+    const dialog = await startMerge(page);
+    await dialog.getByRole('button', { name: '今の記録を優先' }).click();
+    await expect(dialog).toBeHidden();
+    expect((await readSaved(page)).records).toEqual({ ...INCOMING, ...CURRENT });
+  });
+
+  test('やめる: 何も変わらない', async ({ page }) => {
+    const dialog = await startMerge(page);
+    await dialog.getByRole('button', { name: 'やめる' }).click();
+    await expect(dialog).toBeHidden();
+    expect((await readSaved(page)).records).toEqual(CURRENT);
+  });
+});

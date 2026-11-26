@@ -96,7 +96,7 @@
 
     <section class="history" aria-labelledby="history-heading">
       <h2 id="history-heading">これまでの記録</h2>
-      <p class="hint">「出た」日を色で表示します（見るだけです）。修正や取り消しは上の「カレンダー」から行えます。</p>
+      <p class="hint">「出た」「ちょっと出た」日を色で表示します（見るだけです）。修正や取り消しは上の「カレンダー」から行えます。</p>
       <div class="heatmap-scroll" id="heatmap"></div>
       <ul class="legend" aria-label="凡例">
         <li><span class="legend-swatch" data-status="1" aria-hidden="true"></span>出た</li>
@@ -159,6 +159,14 @@
       <div class="day-dialog-actions">
         <button type="button" class="btn-done-small" data-action="merge">統合する</button>
         <button type="button" class="btn-pill" data-action="overwrite">上書きする</button>
+        <button type="button" class="btn-link" data-action="cancel">やめる</button>
+      </div>
+    </div>
+    <div id="import-step-conflict" hidden>
+      <p class="dialog-text" id="conflict-text"></p>
+      <div class="day-dialog-actions">
+        <button type="button" class="btn-done-small" data-action="prefer-incoming">読み込む側を優先</button>
+        <button type="button" class="btn-pill" data-action="prefer-current">今の記録を優先</button>
         <button type="button" class="btn-link" data-action="cancel">やめる</button>
       </div>
     </div>

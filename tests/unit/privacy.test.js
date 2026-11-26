@@ -70,3 +70,7 @@ test('記録するのは「出た」だけ（仕様変更）: 「出てない」
   assert.doesNotMatch(text, /出てない/);
   assert.match(text, /「出た」/);
 });
+
+test('「ちょっと出た」も記録できることと整合している', () => {
+  assert.match(text, /ちょっと出た/);
+});

@@ -41,3 +41,7 @@ test('記録するのは「出た」だけ（仕様変更）', () => {
   assert.doesNotMatch(md, /連続日数/);
   assert.doesNotMatch(md, /「出てない」を押/);
 });
+
+test('「ちょっと出た」の使い方を説明している', () => {
+  assert.match(md, /ちょっと出た/);
+});

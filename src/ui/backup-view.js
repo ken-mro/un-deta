@@ -1,7 +1,7 @@
 // バックアップ画面: 書き出し（コピー）と読み込み（上書き／統合）
 import { encodeBackup, decodeBackup, BackupError } from '../lib/backup-codec.js';
 import { analyzeImport, mergeRecords, overwriteRecords } from '../lib/import-merge.js';
-import { countRecords, normalizeRecords } from '../lib/records.js';
+import { STATUS, countRecords, normalizeRecords } from '../lib/records.js';
 import { formatDateJa } from './heatmap-view.js';
 import { encodeQR, qrToSvgPath } from '../lib/qr.js';
 
@@ -19,7 +19,7 @@ export function createBackupView({ getState, update, todayKey }) {
   const status = $('backup-status');
   const error = $('import-error');
   const dialog = $('import-dialog');
-  const steps = ['import-step-choose', 'import-step-overwrite'].map($);
+  const steps = ['import-step-choose', 'import-step-overwrite', 'import-step-conflict'].map($);
   let pending = null; // 読み込もうとしている記録
 
   const showStep = (id) => steps.forEach((s) => (s.hidden = s.id !== id));
@@ -55,7 +55,7 @@ export function createBackupView({ getState, update, todayKey }) {
     pending = incoming;
     const a = analyzeImport(getState().records, incoming);
     $('import-summary').textContent =
-      `読み込む記録: ${countRecords(incoming)}日分（新しく増える日 ${a.added}日・すでに記録がある日 ${a.same}日）。` +
+      `読み込む記録: ${countRecords(incoming)}日分（新しく増える日 ${a.added}日・記録が違う日 ${a.conflicts.length}日・同じ記録の日 ${a.same}日）。` +
       '今の記録と「統合」するか、読み込んだ内容で「上書き」するかを選んでください。';
     showStep('import-step-choose');
     dialog.showModal();
@@ -74,9 +74,20 @@ export function createBackupView({ getState, update, todayKey }) {
     if (!action || !pending) return;
     const current = getState().records;
     switch (action) {
-      // 記録は「出た」だけなので衝突は起きない（どちらを優先しても結果は同じ）
-      case 'merge':
+      case 'merge': {
+        const { conflicts } = analyzeImport(current, pending);
+        if (conflicts.length === 0) return apply(mergeRecords(current, pending, { preferIncoming: true }));
+        // 同じ日に「出た」と「ちょっと出た」がぶつかるときは、どちらを優先するか確認する
+        const ex = conflicts[0];
+        const name = (s) => (s === STATUS.LITTLE ? 'ちょっと出た' : '出た');
+        $('conflict-text').textContent =
+          `記録が違う日が ${conflicts.length}日 あります（例: ${formatDateJa(ex.date)} は 今「${name(ex.current)}」、読み込む側「${name(ex.incoming)}」）。どちらを優先しますか？`;
+        return showStep('import-step-conflict');
+      }
+      case 'prefer-incoming':
         return apply(mergeRecords(current, pending, { preferIncoming: true }));
+      case 'prefer-current':
+        return apply(mergeRecords(current, pending, { preferIncoming: false }));
       case 'overwrite': {
         const n = countRecords(current);
         if (n === 0) return apply(overwriteRecords(current, pending));

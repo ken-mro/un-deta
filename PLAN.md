@@ -84,4 +84,4 @@
 - [x] ロジック: STATUS.LITTLE=3（records・コーデック・保存データの正規化・経過日数・月のカレンダー・ヒートマップ）
 - [x] ホーム: 「ちょっと出た」ボタン・状態表示・演出
 - [x] カレンダー・ヒートマップ・修正ダイアログの表示と修正
-- [ ] バックアップ読み込み、規約・ポリシー・README・SPEC.updated.md、sw.js VERSION、verify.sh
+- [x] バックアップ読み込み、規約・ポリシー・README・SPEC.updated.md、sw.js VERSION、verify.sh
