@@ -1,5 +1,6 @@
-// 依存なしの静的配信サーバ（開発・E2E 用）。127.0.0.1 のみで待ち受ける。
-// 使い方: node scripts/serve.mjs [--port 4173] [--root .]
+// 依存なしの静的配信サーバ（開発・E2E 用）。既定では 127.0.0.1 のみで待ち受ける。
+// 使い方: node scripts/serve.mjs [--port 4173] [--root .] [--base /un-deta/] [--host ::]
+//   --host :: … スマホなど他の端末から確認するときだけ明示的に指定する（LAN / Tailscale に公開される）
 import { createServer } from 'node:http';
 import { createReadStream } from 'node:fs';
 import { stat, realpath } from 'node:fs/promises';
@@ -19,7 +20,7 @@ const MIME = {
   '.txt': 'text/plain; charset=utf-8',
 };
 
-const HOST = '127.0.0.1';
+const DEFAULT_HOST = '127.0.0.1';
 
 /** URL パスをルート配下の実ファイルパスに解決する。ルート外・不正なら null / 'bad' */
 async function resolvePath(rootReal, urlPath) {
@@ -51,7 +52,7 @@ function send(res, status, body) {
   res.end(body);
 }
 
-export async function startServer({ root = process.cwd(), port = 4173, base = '/' } = {}) {
+export async function startServer({ root = process.cwd(), port = 4173, base = '/', host = DEFAULT_HOST } = {}) {
   if (typeof base !== 'string' || !base.startsWith('/') || !base.endsWith('/')) {
     throw new TypeError('base は "/" で始まり "/" で終わるパスにしてください（例: /un-deta/）');
   }
@@ -87,7 +88,7 @@ export async function startServer({ root = process.cwd(), port = 4173, base = '/
   });
   await new Promise((ok, ng) => {
     server.once('error', ng);
-    server.listen(port, HOST, ok);
+    server.listen(port, host, ok);
   });
   return server;
 }
@@ -101,6 +102,8 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
   const port = Number(arg('--port', process.env.PORT ?? 4173));
   const root = arg('--root', join(fileURLToPath(new URL('..', import.meta.url))));
   const base = arg('--base', '/');
-  const server = await startServer({ root, port, base });
-  console.log(`serving ${root} at http://${HOST}:${server.address().port}${base}`);
+  const host = arg('--host', DEFAULT_HOST);
+  const server = await startServer({ root, port, base, host });
+  const shown = host === DEFAULT_HOST ? DEFAULT_HOST : `${host}（全インターフェース）`;
+  console.log(`serving ${root} on ${shown} port ${server.address().port}${base}`);
 }
