@@ -37,7 +37,8 @@ test('準拠法は日本法', () => {
 
 test('運営者 ken_mro、問い合わせ先プレースホルダ、制定日', () => {
   assert.match(text, /ken_mro/);
-  assert.match(text, /\{\{CONTACT\}\}/);
+  assert.doesNotMatch(html, /\{\{CONTACT\}\}/, 'プレースホルダが残っていない');
+  assert.match(html, /<a href="mailto:bacon\.dev\.6396@gmail\.com">bacon\.dev\.6396@gmail\.com<\/a>/);
   assert.match(text, /制定日[:：]\s*\d{4}年\d{1,2}月\d{1,2}日/);
 });
 
@@ -50,4 +51,9 @@ test('アプリと同じデザイン（共通 CSS）・CSP・外部読み込み�
   assert.match(html, /Content-Security-Policy/);
   assert.doesNotMatch(html, /(src|href)="https?:\/\//);
   assert.match(html, /<a href="\.\/">/);
+});
+
+test('記録するのは「出た」だけ（仕様変更）: 「出てない」を記録する記述がない', () => {
+  assert.doesNotMatch(text, /出てない/);
+  assert.match(text, /「出た」/);
 });

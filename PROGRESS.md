@@ -198,3 +198,7 @@
 - やったこと: backup.spec を先に更新（データは「出た」のみ、統合は確認なしで合わさる、読み込みデータ中の「出てない」は統合・上書きとも無視）、qr.spec のデータも更新 → backup-view で decode 結果を onlyDone で正規化、衝突確認ステップ（HTML・JS）を撤去して Green（ユニット136件・E2E 156件）
 - 判断: サマリは「読み込む記録 N日分（新しく増える日・すでに記録がある日）」。import-merge.js の衝突処理（preferIncoming 必須）は汎用ロジックとして残す
 - 申し送り: 次は規約・ポリシー・README の更新と問い合わせ先の差し替え
+
+## 2026-11-26 仕様変更6-5: 規約・ポリシー・README と問い合わせ先
+- やったこと: terms / privacy / readme / human-todo のテストを先に更新（{{CONTACT}} が残っていない・mailto リンク、「出てない」を記録する記述なし、README は「前回の『出た』から」、HUMAN_TODO で問い合わせ先は完了・SPEC.md 更新を依頼。Red 7件）→ 各文書を更新して Green（ユニット140件）
+- 判断: 問い合わせ先はユーザー指定の bacon.dev.6396@gmail.com を mailto リンクで掲載（公開ページに載る旨と迷惑メールの可能性を HUMAN_TODO に注記）。sw.js の VERSION を 2 に。SPEC.md の差し替え内容を HUMAN_TODO に具体的に列挙

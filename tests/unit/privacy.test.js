@@ -51,7 +51,8 @@ test('端末変更・削除時のデータの扱い', () => {
 
 test('問い合わせ先・運営者・制定日', () => {
   assert.match(text, /ken_mro/);
-  assert.match(text, /\{\{CONTACT\}\}/);
+  assert.doesNotMatch(html, /\{\{CONTACT\}\}/, 'プレースホルダが残っていない');
+  assert.match(html, /<a href="mailto:bacon\.dev\.6396@gmail\.com">bacon\.dev\.6396@gmail\.com<\/a>/);
   assert.match(text, /制定日[:：]\s*\d{4}年\d{1,2}月\d{1,2}日/);
 });
 
@@ -63,4 +64,9 @@ test('外部リンクは GitHub のポリシー（<a href>）だけで、外部�
   }
   assert.match(html, /<link rel="stylesheet" href="\.\/src\/styles\.css">/);
   assert.match(html, /Content-Security-Policy/);
+});
+
+test('記録するのは「出た」だけ（仕様変更）: 「出てない」を記録する記述がない', () => {
+  assert.doesNotMatch(text, /出てない/);
+  assert.match(text, /「出た」/);
 });

@@ -35,3 +35,9 @@ test('プライバシー方針の要約（端末内のみ・収集しない・�
 test('効能をうたわない', () => {
   assert.doesNotMatch(md, /便秘(を|が)?(改善|解消|治)|健康にな|治る/);
 });
+
+test('記録するのは「出た」だけ（仕様変更）', () => {
+  assert.match(md, /前回の「出た」から/);
+  assert.doesNotMatch(md, /連続日数/);
+  assert.doesNotMatch(md, /「出てない」を押/);
+});
