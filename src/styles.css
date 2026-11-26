@@ -628,3 +628,38 @@ button {
 .reminder .btn-link {
   margin-top: 0;
 }
+
+/* ---- 端末内保存の表示・フッター ---- */
+.local-only {
+  margin: 0.4rem 0 0;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.app-footer {
+  max-width: 36rem;
+  margin: 1rem auto 0;
+  padding: 1.5rem 1.25rem 2.5rem;
+  border-top: 1px solid var(--border);
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.app-footer nav {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+}
+
+.app-footer a {
+  color: var(--text);
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+}
+
+.app-footer p {
+  margin: 0.25rem 0 0;
+}

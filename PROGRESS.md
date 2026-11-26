@@ -110,3 +110,8 @@
 - やったこと: `tests/e2e/dark-mode.spec.js`（OS 設定への追従＋ライト／ダーク両方で主要15要素のコントラスト比 4.5:1 以上をページ内で計算。Red）→ `prefers-color-scheme: dark` で :root の CSS 変数を上書き（E2E 98件 pass）
 - 判断: color-scheme: light dark（フォーム部品も追従）。色のハードコードを変数化（--border, --warn-*, --cell-*）。ダークのアクセントは明るい橙に暗い文字。QR は常に白地に黒のまま
 - 申し送り: 警告バナーと催促が両方出ると「出た」ボタンが下がる。最終レビューで配置を検討してもよい
+
+## 2026-11-26 タスク2-11: 端末内保存の表示とフッター
+- やったこと: `tests/e2e/footer.spec.js`（2件×2、Red）→ ヘッダーに「データはこの端末の中だけに保存されます。どこにも送信しません。」、フッター（contentinfo）に ./terms.html・./privacy.html への相対リンクと運営者 ken_mro を追加（E2E 102件 pass）。UI フェーズ完了
+- 判断: 「どこにも送信しません」と書いたので、PLAN 5 の外部リクエスト検知 E2E で必ず担保する。terms.html / privacy.html はまだ無い（PLAN 4 で作成）
+- 申し送り: 次は PWA（manifest・アイコン・service worker）。アイコン PNG は依存なしで生成する必要あり（node の zlib で PNG を書く等）

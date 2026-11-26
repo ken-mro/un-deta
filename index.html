@@ -14,6 +14,7 @@
   <header class="app-header">
     <h1 class="app-title">うん、出た。</h1>
     <p class="today" data-testid="today"></p>
+    <p class="local-only">データはこの端末の中だけに保存されます。どこにも送信しません。</p>
   </header>
 
   <main class="app-main">
@@ -116,6 +117,14 @@
       </details>
     </section>
   </main>
+
+  <footer class="app-footer">
+    <nav aria-label="規約とポリシー">
+      <a href="./terms.html">利用規約</a>
+      <a href="./privacy.html">プライバシーポリシー</a>
+    </nav>
+    <p>運営: ken_mro</p>
+  </footer>
 
   <dialog class="day-dialog" id="import-dialog" aria-labelledby="import-dialog-title">
     <h2 id="import-dialog-title" class="day-dialog-title">バックアップの読み込み</h2>
