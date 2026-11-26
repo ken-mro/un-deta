@@ -1,48 +1,36 @@
-// ヒートマップ（直近1年）と、日付タップでの修正・取り消し
+// ヒートマップ（直近1年）: 見るだけの表示。マスが小さいので押しても反応しない（修正はカレンダーから）
 import { test, expect } from '@playwright/test';
-import { seed, fixToday, readSaved } from './helpers.js';
+import { seed, fixToday } from './helpers.js';
 
 test.beforeEach(async ({ page }) => fixToday(page));
 
+const heatmap = (page) => page.getByRole('region', { name: 'これまでの記録' });
 const cell = (page, date) => page.locator(`[data-date="${date}"]`);
 
-test('直近1年分（365日）のセルがあり、状態が表示される', async ({ page }) => {
-  await seed(page, { records: { '2024-03-09': 1, '2024-03-08': 2 } }); // 2 は旧データの「出てない」
+test('直近1年分（365日）のマスがあり、状態が表示される', async ({ page }) => {
+  await seed(page, { records: { '2024-03-09': 1, '2024-03-08': 2, '2023-06-01': 1 } }); // 2 は旧データの「出てない」
   await page.goto('/');
-  const heatmap = page.getByRole('region', { name: 'これまでの記録' });
-  await expect(heatmap).toBeVisible();
-  await expect(heatmap.locator('[data-date]')).toHaveCount(365);
+  await expect(heatmap(page)).toBeVisible();
+  await expect(heatmap(page).locator('[data-date]')).toHaveCount(365);
   await expect(cell(page, '2024-03-10')).toHaveAttribute('data-status', '0');
   await expect(cell(page, '2024-03-09')).toHaveAttribute('data-status', '1');
   await expect(cell(page, '2024-03-08')).toHaveAttribute('data-status', '0'); // 旧データの「出てない」は未記録として表示
-  await expect(cell(page, '2024-03-09')).toHaveAccessibleName(/2024年3月9日.*出た/);
-  await expect(cell(page, '2024-03-07')).toHaveAccessibleName(/2024年3月7日.*未記録/);
   await expect(cell(page, '2023-03-11')).toHaveCount(0);
   await expect(cell(page, '2024-03-11')).toHaveCount(0);
+});
+
+test('読み上げ用に、直近1年の「出た」日数をまとめて伝える', async ({ page }) => {
+  await seed(page, { records: { '2024-03-09': 1, '2023-06-01': 1, '2022-01-01': 1 } });
+  await page.goto('/');
+  const img = heatmap(page).getByRole('img');
+  await expect(img).toHaveAccessibleName('直近1年で「出た」日: 2日');
 });
 
 test('ホームで記録するとヒートマップにも反映される', async ({ page }) => {
   await page.goto('/');
   await page.getByRole('button', { name: '出た', exact: true }).click();
   await expect(cell(page, '2024-03-10')).toHaveAttribute('data-status', '1');
-});
-
-test('過去の日をタップして「出た」を記録でき、リロード後も保持・日数表示も更新', async ({ page }) => {
-  await seed(page, { records: { '2024-03-05': 1 } });
-  await page.goto('/');
-  await expect(page.getByTestId('since')).toHaveText('前回の「出た」から 5日');
-  await cell(page, '2024-03-09').click();
-  const dialog = page.getByRole('dialog');
-  await expect(dialog).toBeVisible();
-  await expect(dialog).toContainText('2024年3月9日');
-  await expect(dialog.getByRole('button', { name: '出てない', exact: true })).toHaveCount(0);
-  await dialog.getByRole('button', { name: '出た', exact: true }).click();
-  await expect(dialog).toBeHidden();
-  await expect(cell(page, '2024-03-09')).toHaveAttribute('data-status', '1');
-  await expect(page.getByTestId('since')).toHaveText('前回の「出た」から 1日');
-  await page.reload();
-  await expect(cell(page, '2024-03-09')).toHaveAttribute('data-status', '1');
-  expect((await readSaved(page)).records['2024-03-09']).toBe(1);
+  await expect(heatmap(page).getByRole('img')).toHaveAccessibleName('直近1年で「出た」日: 1日');
 });
 
 test('凡例は「出た」「未記録」の2つ', async ({ page }) => {
@@ -51,49 +39,26 @@ test('凡例は「出た」「未記録」の2つ', async ({ page }) => {
   await expect(legend).toHaveText(['出た', '未記録']);
 });
 
-test('記録を取り消して未記録に戻せる', async ({ page }) => {
+test('マスは押しても反応しない（ボタンではなく、ダイアログも開かない）', async ({ page }) => {
   await seed(page, { records: { '2024-03-01': 1 } });
   await page.goto('/');
-  await cell(page, '2024-03-01').click();
-  await page.getByRole('dialog').getByRole('button', { name: '記録を消す' }).click();
-  await expect(cell(page, '2024-03-01')).toHaveAttribute('data-status', '0');
-  expect((await readSaved(page)).records['2024-03-01']).toBeUndefined();
-});
-
-test('キャンセル（Escape）では変更しない', async ({ page }) => {
-  await seed(page, { records: { '2024-03-01': 1 } });
-  await page.goto('/');
-  await cell(page, '2024-03-01').click();
-  await expect(page.getByRole('dialog')).toBeVisible();
-  await page.keyboard.press('Escape');
+  await expect(heatmap(page).getByRole('button')).toHaveCount(0);
+  await cell(page, '2024-03-01').click({ force: true });
+  await cell(page, '2024-03-10').click({ force: true });
   await expect(page.getByRole('dialog')).toBeHidden();
   await expect(cell(page, '2024-03-01')).toHaveAttribute('data-status', '1');
-  await cell(page, '2024-03-01').click();
-  await page.getByRole('dialog').getByRole('button', { name: 'キャンセル' }).click();
-  await expect(page.getByRole('dialog')).toBeHidden();
-  await expect(cell(page, '2024-03-01')).toHaveAttribute('data-status', '1');
+  const cursor = await cell(page, '2024-03-01').evaluate((el) => getComputedStyle(el).cursor);
+  expect(cursor).not.toBe('pointer');
 });
 
-test('今日のセルを修正するとホームの状態も変わる', async ({ page }) => {
+test('キーボードでもフォーカスされない（Tab が止まらない）', async ({ page }) => {
   await page.goto('/');
-  await cell(page, '2024-03-10').click();
-  await page.getByRole('dialog').getByRole('button', { name: '出た', exact: true }).click();
-  await expect(page.getByTestId('today-status')).toHaveText('今日は「出た」');
+  const focusable = await heatmap(page).locator('[data-date]').evaluateAll((els) => els.filter((el) => el.tabIndex >= 0 || el.hasAttribute('tabindex')).length);
+  expect(focusable).toBe(0);
 });
 
-test('キーボード: Tab で1つだけフォーカスでき、矢印キーで日付を移動、Enter で開く', async ({ page, browserName }) => {
-  test.info().annotations.push({ type: 'note', description: browserName });
+test('修正はカレンダーからと案内する', async ({ page }) => {
   await page.goto('/');
-  const today = cell(page, '2024-03-10');
-  await expect(today).toHaveAttribute('tabindex', '0');
-  await expect(cell(page, '2024-03-09')).toHaveAttribute('tabindex', '-1');
-  await today.focus();
-  await page.keyboard.press('ArrowUp');
-  await expect(cell(page, '2024-03-09')).toBeFocused();
-  await page.keyboard.press('ArrowLeft');
-  await expect(cell(page, '2024-03-02')).toBeFocused();
-  await page.keyboard.press('ArrowDown');
-  await expect(cell(page, '2024-03-03')).toBeFocused();
-  await page.keyboard.press('Enter');
-  await expect(page.getByRole('dialog')).toContainText('2024年3月3日');
+  await expect(heatmap(page)).toContainText('カレンダー');
+  await expect(heatmap(page)).not.toContainText('タップすると');
 });

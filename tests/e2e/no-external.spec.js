@@ -38,7 +38,7 @@ test('全ページ・全機能を使っても、同一オリジン以外への�
   await page.goto('/');
   await page.evaluate(() => navigator.serviceWorker.ready);
   await page.getByRole('button', { name: '出た', exact: true }).click();
-  await page.locator('[data-date="2024-03-01"]').click();
+  await page.locator('[data-cal-date="2024-03-01"]').click();
   await page.getByRole('dialog').getByRole('button', { name: '出た', exact: true }).click();
   await page.getByText('追加のしかた').click();
   await page.getByText('QRコードで表示').click();

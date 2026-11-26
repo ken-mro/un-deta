@@ -7,7 +7,7 @@ import { test, expect } from '@playwright/test';
 async function useEverything(page) {
   await page.goto('/');
   await page.getByRole('button', { name: '出た', exact: true }).click();
-  await page.locator('[data-date]').nth(300).click();
+  await page.locator('[data-cal-date]:not([disabled])').first().click();
   await page.getByRole('dialog').getByRole('button', { name: '出た', exact: true }).click();
   await page.getByText('QRコードで表示').click();
   const section = page.getByRole('region', { name: 'バックアップ' });

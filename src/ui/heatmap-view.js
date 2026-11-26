@@ -1,10 +1,9 @@
-// ヒートマップの描画とキーボード操作（roving tabindex）
-import { addDays, parseDateKey } from '../lib/date.js';
+// ヒートマップ（直近1年）の描画。見るだけの表示で、押しても反応しない（修正は月のカレンダーから）。
+import { parseDateKey } from '../lib/date.js';
 import { buildHeatmap } from '../lib/heatmap.js';
 import { STATUS } from '../lib/records.js';
 
 const WEEKDAYS = ['日', '月', '火', '水', '木', '金', '土'];
-const STATUS_LABEL = { [STATUS.NONE]: '未記録', [STATUS.DONE]: '出た' };
 
 export function formatDateJa(key) {
   const d = parseDateKey(key);
@@ -18,76 +17,27 @@ function el(tag, attrs = {}, text) {
   return node;
 }
 
-/**
- * @param {HTMLElement} root 描画先
- * @param {(date: string) => void} onSelect セルが選ばれたとき
- */
-export function createHeatmapView(root, onSelect) {
-  let focusDate = null;
-  let range = { start: '', end: '' };
-
-  const cellFor = (date) => root.querySelector(`[data-date="${date}"]`);
-
-  function moveFocus(date) {
-    if (date < range.start || date > range.end) return;
-    const next = cellFor(date);
-    if (!next) return;
-    root.querySelectorAll('[data-date][tabindex="0"]').forEach((c) => c.setAttribute('tabindex', '-1'));
-    next.setAttribute('tabindex', '0');
-    next.focus();
-    focusDate = date;
-  }
-
-  root.addEventListener('click', (e) => {
-    const target = e.target.closest('[data-date]');
-    if (!target) return;
-    moveFocus(target.dataset.date);
-    onSelect(target.dataset.date);
-  });
-
-  root.addEventListener('keydown', (e) => {
-    const target = e.target.closest('[data-date]');
-    if (!target) return;
-    const delta = { ArrowUp: -1, ArrowDown: 1, ArrowLeft: -7, ArrowRight: 7 }[e.key];
-    if (delta !== undefined) {
-      e.preventDefault();
-      moveFocus(addDays(target.dataset.date, delta));
-    } else if (e.key === 'Home') {
-      e.preventDefault();
-      moveFocus(range.start);
-    } else if (e.key === 'End') {
-      e.preventDefault();
-      moveFocus(range.end);
-    }
-  });
-
+/** @param {HTMLElement} root 描画先 */
+export function createHeatmapView(root) {
   function render(records, todayKey) {
-    const { weeks, monthLabels, start, end } = buildHeatmap(records, todayKey);
-    range = { start, end };
-    if (!focusDate || focusDate < start || focusDate > end) focusDate = end;
-    const hadFocus = root.contains(document.activeElement);
+    const { weeks, monthLabels } = buildHeatmap(records, todayKey);
+    const doneCount = weeks.flat().filter((c) => c?.status === STATUS.DONE).length;
 
-    const grid = el('div', { class: 'heatmap-grid', role: 'group', 'aria-label': `${formatDateJa(start)}から${formatDateJa(end)}までの記録` });
+    // マスを1つずつ読み上げず、まとめて伝える（role="img" の子は読み上げ対象外になる）
+    const grid = el('div', { class: 'heatmap-grid', role: 'img', 'aria-label': `直近1年で「出た」日: ${doneCount}日` });
     grid.style.setProperty('--weeks', String(weeks.length));
-    grid.append(el('span', { class: 'heatmap-corner', 'aria-hidden': 'true' }));
-    monthLabels.forEach((label) => grid.append(el('span', { class: 'heatmap-month', 'aria-hidden': 'true' }, label ?? '')));
+    grid.append(el('span', { class: 'heatmap-corner' }));
+    monthLabels.forEach((label) => grid.append(el('span', { class: 'heatmap-month' }, label ?? '')));
     WEEKDAYS.forEach((w, i) => {
-      const wd = el('span', { class: 'heatmap-weekday', 'aria-hidden': 'true' }, i % 2 === 1 ? w : '');
+      const wd = el('span', { class: 'heatmap-weekday' }, i % 2 === 1 ? w : '');
       wd.style.gridRow = String(i + 2);
       grid.append(wd);
     });
     weeks.forEach((week, wi) => {
       week.forEach((c, di) => {
         const node = c
-          ? el('button', {
-              type: 'button',
-              class: 'heatmap-cell',
-              'data-date': c.date,
-              'data-status': String(c.status),
-              tabindex: c.date === focusDate ? '0' : '-1',
-              'aria-label': `${formatDateJa(c.date)} ${STATUS_LABEL[c.status]}${c.date === todayKey ? '（今日）' : ''}`,
-            })
-          : el('span', { class: 'heatmap-empty', 'aria-hidden': 'true' });
+          ? el('span', { class: 'heatmap-cell', 'data-date': c.date, 'data-status': String(c.status), title: `${formatDateJa(c.date)} ${c.status === STATUS.DONE ? '出た' : '未記録'}` })
+          : el('span', { class: 'heatmap-empty' });
         if (c?.date === todayKey) node.classList.add('is-today');
         node.style.gridColumn = String(wi + 2);
         node.style.gridRow = String(di + 2);
@@ -95,12 +45,10 @@ export function createHeatmapView(root, onSelect) {
       });
     });
     root.replaceChildren(grid);
-    if (hadFocus) cellFor(focusDate)?.focus();
   }
 
   return {
     render,
-    focus: (date) => moveFocus(date),
     scrollToEnd() {
       root.scrollLeft = root.scrollWidth;
     },

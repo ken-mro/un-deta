@@ -78,7 +78,7 @@ function openDayDialog(date, view) {
   dayDialog.showModal();
 }
 
-const heatmap = createHeatmapView($('heatmap'), (date) => openDayDialog(date, heatmap));
+const heatmap = createHeatmapView($('heatmap'));
 const calendar = createCalendarView($('calendar'), (date) => openDayDialog(date, calendar));
 
 dayDialog.addEventListener('click', (e) => {

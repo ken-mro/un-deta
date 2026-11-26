@@ -51,11 +51,11 @@ test('キーボードだけで記録できる（Tab で到達、Space / Enter �
   await expect(page.getByTestId('today-status')).toHaveText('まだ記録していません');
 });
 
-test('キーボードだけで過去の日を修正できる（ダイアログ内にフォーカス、閉じたら元のセルへ）', async ({ page, browserName }) => {
+test('キーボードだけで過去の日を修正できる（カレンダー → ダイアログ内にフォーカス、閉じたら元のマスへ）', async ({ page, browserName }) => {
   await page.goto('/');
-  const today = page.locator('[data-date="2024-03-10"]');
+  const today = page.locator('[data-cal-date="2024-03-10"]');
   await today.focus();
-  await page.keyboard.press('ArrowUp');
+  await page.keyboard.press('ArrowLeft');
   await page.keyboard.press('Enter');
   const dialog = page.getByRole('dialog');
   await expect(dialog).toBeVisible();
@@ -65,7 +65,8 @@ test('キーボードだけで過去の日を修正できる（ダイアログ�
   await dialog.getByRole('button', { name: '出た', exact: true }).focus();
   await page.keyboard.press('Enter');
   await expect(dialog).toBeHidden();
-  await expect(page.locator('[data-date="2024-03-09"]')).toBeFocused();
+  await expect(page.locator('[data-cal-date="2024-03-09"]')).toBeFocused();
+  await expect(page.locator('[data-cal-date="2024-03-09"]')).toHaveAttribute('data-status', '1');
   await expect(page.locator('[data-date="2024-03-09"]')).toHaveAttribute('data-status', '1');
 });
 

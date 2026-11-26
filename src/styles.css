@@ -334,11 +334,6 @@ button {
   outline-offset: 1px;
 }
 
-.heatmap-cell:focus-visible {
-  outline: 3px solid var(--focus);
-  outline-offset: 1px;
-}
-
 .legend {
   display: flex;
   gap: 1rem;

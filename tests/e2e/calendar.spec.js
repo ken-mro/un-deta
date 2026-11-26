@@ -83,6 +83,26 @@ test('未来の日は押せない', async ({ page }) => {
   await expect(day(page, '2024-03-10')).toBeEnabled();
 });
 
+test('キャンセル（ボタン・Escape）では変更しない', async ({ page }) => {
+  await seed(page, { records: { '2024-03-01': 1 } });
+  await page.goto('/');
+  await day(page, '2024-03-01').click();
+  await page.getByRole('dialog').getByRole('button', { name: 'キャンセル' }).click();
+  await expect(page.getByRole('dialog')).toBeHidden();
+  await day(page, '2024-03-01').click();
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('dialog')).toBeHidden();
+  await expect(day(page, '2024-03-01')).toHaveAttribute('data-status', '1');
+  expect((await readSaved(page)).records['2024-03-01']).toBe(1);
+});
+
+test('今日のマスを修正するとホームの状態も変わる', async ({ page }) => {
+  await page.goto('/');
+  await day(page, '2024-03-10').click();
+  await page.getByRole('dialog').getByRole('button', { name: '出た', exact: true }).click();
+  await expect(page.getByTestId('today-status')).toHaveText('今日は「出た」');
+});
+
 test('閉じたらフォーカスがカレンダーの日付に戻る', async ({ page }) => {
   await page.goto('/');
   await day(page, '2024-03-04').click();
