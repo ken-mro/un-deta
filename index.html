@@ -32,6 +32,28 @@
       <button type="button" class="btn-link" id="btn-clear-today" hidden>今日の記録を取り消す</button>
       <p class="save-error" id="save-error" role="alert" hidden>記録を保存できませんでした。ブラウザの設定（プライベートブラウズなど）をご確認ください。</p>
     </section>
+
+    <section class="history" aria-labelledby="history-heading">
+      <h2 id="history-heading">これまでの記録</h2>
+      <p class="hint">日付をタップすると、あとから修正・取り消しできます。</p>
+      <div class="heatmap-scroll" id="heatmap"></div>
+      <ul class="legend" aria-label="凡例">
+        <li><span class="legend-swatch" data-status="1" aria-hidden="true"></span>出た</li>
+        <li><span class="legend-swatch" data-status="2" aria-hidden="true"></span>出てない</li>
+        <li><span class="legend-swatch" data-status="0" aria-hidden="true"></span>未記録</li>
+      </ul>
+    </section>
   </main>
+
+  <dialog class="day-dialog" id="day-dialog" aria-labelledby="day-dialog-title">
+    <h2 id="day-dialog-title" class="day-dialog-title"></h2>
+    <p class="day-dialog-current" id="day-dialog-current"></p>
+    <div class="day-dialog-actions">
+      <button type="button" class="btn-done-small" data-set="1">出た</button>
+      <button type="button" class="btn-not-yet" data-set="2">出てない</button>
+      <button type="button" class="btn-link" data-set="0">記録を消す</button>
+      <button type="button" class="btn-link" data-action="cancel">キャンセル</button>
+    </div>
+  </dialog>
 </body>
 </html>

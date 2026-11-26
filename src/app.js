@@ -2,6 +2,7 @@
 import { toDateKey } from './lib/date.js';
 import { STATUS, getStatus, setStatus, clearStatus } from './lib/records.js';
 import { notYetStreak } from './lib/streak.js';
+import { createHeatmapView, formatDateJa } from './ui/heatmap-view.js';
 import { createStorage, getLocalStorage, requestPersist } from './lib/storage.js';
 
 const WEEKDAYS = ['日', '月', '火', '水', '木', '金', '土'];
@@ -39,7 +40,36 @@ function render() {
   const streakEl = document.querySelector('[data-testid="streak"]');
   streakEl.hidden = streak === 0;
   streakEl.querySelector('.streak-count').textContent = `${streak}日`;
+
+  heatmap.render(state.records, key);
 }
+
+// ---- ヒートマップと日付ごとの修正 ----
+const STATUS_NAME = { [STATUS.NONE]: '未記録', [STATUS.DONE]: '出た', [STATUS.NOT_YET]: '出てない' };
+const dayDialog = $('day-dialog');
+let editingDate = null;
+
+const heatmap = createHeatmapView($('heatmap'), (date) => {
+  editingDate = date;
+  $('day-dialog-title').textContent = formatDateJa(date);
+  $('day-dialog-current').textContent = `いまの記録: ${STATUS_NAME[getStatus(state.records, date)]}`;
+  dayDialog.showModal();
+});
+
+dayDialog.addEventListener('click', (e) => {
+  const btn = e.target.closest('button');
+  if (!btn) return;
+  if (btn.dataset.set !== undefined && editingDate) {
+    persist({ ...state, records: setStatus(state.records, editingDate, Number(btn.dataset.set)) });
+  }
+  dayDialog.close();
+});
+
+dayDialog.addEventListener('close', () => {
+  render();
+  if (editingDate) heatmap.focus(editingDate);
+  editingDate = null;
+});
 
 // 押下時の演出（見た目だけ。読み上げは状態テキストで行う）
 let celebrationTimer;
@@ -78,4 +108,5 @@ document.addEventListener('visibilitychange', () => {
 });
 
 render();
+heatmap.scrollToEnd();
 requestPersist();
