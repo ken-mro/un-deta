@@ -1,0 +1,155 @@
+:root {
+  --bg: #fbf8f3;
+  --surface: #ffffff;
+  --text: #2b2420;
+  --text-muted: #5f554d;
+  --accent: #9a5b1e;
+  --accent-text: #ffffff;
+  --secondary: #ece5da;
+  --secondary-text: #3d342d;
+  --focus: #1f6feb;
+  --danger: #a3261b;
+  --radius: 16px;
+  color-scheme: light;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic UI", Meiryo, sans-serif;
+  line-height: 1.6;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+
+.app-header,
+.app-main {
+  max-width: 36rem;
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
+
+.app-header {
+  padding-top: 1.5rem;
+  text-align: center;
+}
+
+.app-title {
+  margin: 0;
+  font-size: 1.5rem;
+  letter-spacing: 0.08em;
+}
+
+.today {
+  margin: 0.25rem 0 0;
+  color: var(--text-muted);
+}
+
+.record {
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+.today-status {
+  margin: 0 0 1rem;
+  font-weight: 600;
+  min-height: 1.6em;
+}
+
+.record-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+}
+
+.btn-done {
+  width: min(16rem, 80vw);
+  aspect-ratio: 1;
+  border: none;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--accent-text);
+  font-size: 2.5rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  box-shadow: 0 8px 0 rgba(0, 0, 0, 0.18);
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
+}
+
+.btn-done:active {
+  transform: translateY(6px);
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.18);
+}
+
+.btn-not-yet {
+  min-width: 10rem;
+  min-height: 3rem;
+  padding: 0.5rem 1.5rem;
+  border: none;
+  border-radius: 999px;
+  background: var(--secondary);
+  color: var(--secondary-text);
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.btn-done[aria-pressed="true"],
+.btn-not-yet[aria-pressed="true"] {
+  outline: 4px solid var(--text);
+  outline-offset: 4px;
+}
+
+.btn-done[aria-pressed="true"]:focus-visible,
+.btn-not-yet[aria-pressed="true"]:focus-visible {
+  outline-color: var(--focus);
+}
+
+.btn-link {
+  margin-top: 1rem;
+  border: none;
+  background: none;
+  color: var(--text-muted);
+  text-decoration: underline;
+  min-height: 2.75rem;
+  padding: 0.5rem;
+}
+
+.save-error {
+  color: var(--danger);
+  font-weight: 600;
+}

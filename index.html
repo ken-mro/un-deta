@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; manifest-src 'self'; connect-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta name="referrer" content="no-referrer">
+  <meta name="description" content="うんちが出たかどうかだけを、1タップで記録する日記アプリ。">
+  <title>うん、出た。</title>
+  <link rel="stylesheet" href="./src/styles.css">
+  <script type="module" src="./src/app.js"></script>
+</head>
+<body>
+  <header class="app-header">
+    <h1 class="app-title">うん、出た。</h1>
+    <p class="today" data-testid="today"></p>
+  </header>
+
+  <main class="app-main">
+    <section class="record" aria-labelledby="record-heading">
+      <h2 id="record-heading" class="visually-hidden">今日の記録</h2>
+      <p class="today-status" data-testid="today-status" role="status" aria-live="polite"></p>
+      <div class="record-buttons">
+        <button type="button" class="btn-done" id="btn-done" aria-pressed="false">出た</button>
+        <button type="button" class="btn-not-yet" id="btn-not-yet" aria-pressed="false">出てない</button>
+      </div>
+      <button type="button" class="btn-link" id="btn-clear-today" hidden>今日の記録を取り消す</button>
+      <p class="save-error" id="save-error" role="alert" hidden>記録を保存できませんでした。ブラウザの設定（プライベートブラウズなど）をご確認ください。</p>
+    </section>
+  </main>
+</body>
+</html>

@@ -59,3 +59,8 @@
 - やったこと: `tests/unit/platform.test.js`（5件、Red）→ `src/lib/platform.js`（detectOS / isStandalone / detectPlatform）で Green。ロジックフェーズ完了（ユニット 80件）
 - 判断: iPhone/iPad/iPod は ios、Mac を名乗りつつ maxTouchPoints>1 は iPadOS として ios、Android は android、他は other。standalone は display-mode: standalone か navigator.standalone（iOS）
 - 申し送り: 次は UI フェーズ。E2E を先に書く。index.html には CSP メタタグ（default-src 'self'）を入れ、外部入力は textContent で表示すること。効能表現チェックの対象なので index.html / src に「治療」等の語を書かない（免責文は terms.html 側へ）
+
+## 2026-11-26 タスク2-1: ホーム画面（今日の記録と保持）
+- やったこと: `tests/e2e/home.spec.js`（6件×2ブラウザ、Red: 404）→ `index.html` / `src/styles.css` / `src/app.js` で Green（E2E 16件 pass）
+- 判断: page.clock で日付固定。ボタンは aria-pressed で状態を表現、状態テキストは role=status。今日の記録の取り消しボタンを用意。保存失敗時は role=alert で通知。CSP メタタグ（default-src 'self'、inline script/style なし）。visibilitychange で日付跨ぎに追従。起動時に requestPersist()
+- 申し送り: 状態テキストは textContent で設定。data-testid="today" / "today-status" を E2E が使用
