@@ -220,10 +220,6 @@ button {
   animation: sparkle-burst 0.9s ease-out both;
 }
 
-.celebration.is-quiet .sparkle {
-  display: none;
-}
-
 .sparkle:nth-of-type(2) { --dx: -4.5rem; --dy: -2rem; }
 .sparkle:nth-of-type(3) { --dx: 4.5rem; --dy: -2rem; background: #d9a441; }
 .sparkle:nth-of-type(4) { --dx: -3rem; --dy: 2.5rem; background: #6aa56f; }
@@ -261,15 +257,10 @@ button {
   }
 }
 
-/* ---- 連続日数 ---- */
-.streak {
+/* ---- 前回の「出た」からの日数 ---- */
+.since {
   margin: 1.25rem 0 0;
   color: var(--text-muted);
-}
-
-.streak-count {
-  color: var(--text);
-  font-size: 1.25rem;
 }
 
 /* ---- ヒートマップ ---- */

@@ -44,10 +44,11 @@ test('キーボードだけで記録できる（Tab で到達、Space / Enter �
   await expect(done).toBeFocused();
   await page.keyboard.press('Space');
   await expect(page.getByTestId('today-status')).toHaveText('今日は「出た」');
-  await page.keyboard.press(TAB);
-  await expect(page.getByRole('button', { name: '出てない', exact: true })).toBeFocused();
+  const clear = page.getByRole('button', { name: '今日の記録を取り消す' });
+  for (let i = 0; i < 10 && !(await clear.evaluate((el) => el === document.activeElement)); i++) await page.keyboard.press(TAB);
+  await expect(clear).toBeFocused();
   await page.keyboard.press('Enter');
-  await expect(page.getByTestId('today-status')).toHaveText('今日は「出てない」');
+  await expect(page.getByTestId('today-status')).toHaveText('まだ記録していません');
 });
 
 test('キーボードだけで過去の日を修正できる（ダイアログ内にフォーカス、閉じたら元のセルへ）', async ({ page, browserName }) => {
@@ -89,7 +90,7 @@ test('キーボードだけでバックアップを読み込める', async ({ pa
 test('キーボードフォーカスが見える（outline がある）', async ({ page, browserName }) => {
   const TAB = tabKey(browserName);
   await page.goto('/');
-  for (const name of ['出た', '出てない']) {
+  for (const name of ['出た']) {
     const btn = page.getByRole('button', { name, exact: true });
     await btn.focus();
     await page.keyboard.press(`Shift+${TAB}`);
@@ -106,7 +107,7 @@ test('キーボードフォーカスが見える（outline がある）', async 
 test('主要な操作部品のタップ領域は 44px 以上', async ({ page }) => {
   await page.goto('/');
   await page.getByRole('button', { name: '出た', exact: true }).click();
-  const selectors = ['#btn-done', '#btn-not-yet', '#btn-clear-today', '#btn-copy', '#btn-import', '.app-footer a', '.install-guide summary', '.qr-details summary', '.device-change summary'];
+  const selectors = ['#btn-done', '#btn-clear-today', '#btn-copy', '#btn-import', '.app-footer a', '.install-guide summary', '.qr-details summary', '.device-change summary'];
   for (const sel of selectors) {
     const boxes = await page.locator(sel).evaluateAll((els) => els.map((el) => el.getBoundingClientRect()).map((r) => [r.width, r.height]));
     expect(boxes.length, sel).toBeGreaterThan(0);

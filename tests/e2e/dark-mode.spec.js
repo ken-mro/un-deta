@@ -40,16 +40,15 @@ async function contrastOf(page, selector) {
 }
 
 const TEXT_SELECTORS = [
-  '.app-title', '.today', '.today-status', '#btn-done', '#btn-not-yet', '.streak', '.hint',
+  '.app-title', '.today', '.today-status', '#btn-done', '.since', '.hint',
   '.install-banner p', '.reminder p', '.legend li', '#export-text', '.field-label', '#btn-copy', '.muted', '#btn-clear-today',
 ];
 
 for (const scheme of ['light', 'dark']) {
   test(`${scheme}: 主要な文字のコントラスト比が 4.5:1 以上`, async ({ page }) => {
     await page.emulateMedia({ colorScheme: scheme });
-    await seed(page, { records: { '2024-01-01': 1, '2024-03-08': 2, '2024-03-09': 2, '2024-03-10': 1 } });
+    await seed(page, { records: { '2024-01-01': 1, '2024-03-07': 1 } });
     await page.goto('/');
-    await page.getByRole('button', { name: '出てない', exact: true }).click();
     for (const sel of TEXT_SELECTORS) {
       const r = await contrastOf(page, sel);
       expect(r.missing, `${sel} が存在する`).toBeUndefined();

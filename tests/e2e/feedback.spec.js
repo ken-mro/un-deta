@@ -20,14 +20,6 @@ test('「出た」で演出が出て、しばらくすると消える', async ({
   await expect(fx).toBeHidden();
 });
 
-test('「出てない」は控えめな演出', async ({ page }) => {
-  await page.goto('/');
-  await page.getByRole('button', { name: '出てない', exact: true }).click();
-  const fx = page.getByTestId('celebration');
-  await expect(fx).toBeVisible();
-  await expect(fx).not.toContainText('すっきり');
-});
-
 test('reduced-motion では動きのあるアニメーションを使わない', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/');

@@ -7,7 +7,6 @@ test.beforeEach(async ({ page }) => {
 });
 
 const doneBtn = (page) => page.getByRole('button', { name: '出た', exact: true });
-const notYetBtn = (page) => page.getByRole('button', { name: '出てない', exact: true });
 
 test('今日の日付と、未記録の状態が表示される', async ({ page }) => {
   await page.goto('/');
@@ -15,7 +14,11 @@ test('今日の日付と、未記録の状態が表示される', async ({ page 
   await expect(page.getByTestId('today')).toContainText('3月10日');
   await expect(page.getByTestId('today-status')).toHaveText('まだ記録していません');
   await expect(doneBtn(page)).toHaveAttribute('aria-pressed', 'false');
-  await expect(notYetBtn(page)).toHaveAttribute('aria-pressed', 'false');
+});
+
+test('「出てない」ボタンはない（仕様変更: 「出た」だけを記録）', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.getByRole('button', { name: '出てない', exact: true })).toHaveCount(0);
 });
 
 test('「出た」で今日が記録され、リロード後も保持される', async ({ page }) => {
@@ -26,18 +29,6 @@ test('「出た」で今日が記録され、リロード後も保持される',
   await page.reload();
   await expect(page.getByTestId('today-status')).toHaveText('今日は「出た」');
   await expect(doneBtn(page)).toHaveAttribute('aria-pressed', 'true');
-  await expect(notYetBtn(page)).toHaveAttribute('aria-pressed', 'false');
-});
-
-test('「出てない」で記録でき、「出た」に付け替えられる', async ({ page }) => {
-  await page.goto('/');
-  await notYetBtn(page).click();
-  await expect(page.getByTestId('today-status')).toHaveText('今日は「出てない」');
-  await page.reload();
-  await expect(notYetBtn(page)).toHaveAttribute('aria-pressed', 'true');
-  await doneBtn(page).click();
-  await expect(page.getByTestId('today-status')).toHaveText('今日は「出た」');
-  await expect(notYetBtn(page)).toHaveAttribute('aria-pressed', 'false');
 });
 
 test('今日の記録を取り消して未記録に戻せる', async ({ page }) => {

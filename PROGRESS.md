@@ -183,3 +183,8 @@
 - やったこと: `tests/unit/since.test.js`（6件）、records の onlyDone、storage の「出てない」除外テストを先に書き Red → `src/lib/since.js`（daysSinceLastDone）、`onlyDone`、storage の正規化で Green。「出てない」連続日数（streak.js とそのテスト）は仕様から外れたため削除。sw.js の PRECACHE も追従（ユニット136件）
 - 判断: バックアップ形式 v1（2bit）は互換のため据え置き。STATUS.NOT_YET 定数はコーデック互換用に残す
 - 申し送り: app.js がまだ streak.js を import しているので、次のホームのタスクで直す（このコミット単体では E2E が落ちる）
+
+## 2026-11-26 仕様変更6-2: ホーム
+- やったこと: E2E を先に更新（home: 「出てない」ボタンがないこと、since.spec 新設＝「前回の『出た』から N日」、feedback・a11y・dark-mode の「出てない」依存を除去。streak.spec は削除）→ index.html から「出てない」ボタン削除、app.js を daysSinceLastDone に切替、演出は「すっきり！」のみ（関連 E2E 70件 pass）
+- 判断: N=0（今日出た）と記録なしは非表示。a11y のキーボード操作は「出た」→「今日の記録を取り消す」で確認
+- 申し送り: heatmap / backup / qr の E2E は「出てない」(2) を含むデータを使っているため現在失敗中。次のタスク（ヒートマップ）とその次（バックアップ）で直す
