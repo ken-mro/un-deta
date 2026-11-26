@@ -33,3 +33,9 @@
 - やったこと: `tests/unit/streak.test.js`（9件、Red）→ `src/lib/streak.js` の `notYetStreak(records, todayKey)` で Green
 - 判断（仕様の固定）: 基準日から過去へ「出てない」を数え「出た」で停止。未記録は数えず途切れさせない（長期間の未記録や年跨ぎでも継続）。今日が未記録でも過去の連続を表示。基準日より未来の記録は無視
 - 申し送り: UI では今日のキーを toDateKey(new Date()) で渡すこと
+
+## 2026-11-26 タスク1-4: バックアップのエンコード／デコード
+- やったこと: `tests/unit/backup-codec.test.js`（16件、Red）→ `src/lib/backup-codec.js`（encodeBackup / decodeBackup / BackupError / FORMAT_VERSION）で Green
+- 判断（形式 v1）: 先頭1文字 '1' がバージョン、続けて base64url で [開始日=1970-01-01 からの日数 3B][1日2bit・1Bに4日・下位から][CRC-8]。空データは '1'。1年分で約130文字。空白・改行は無視。エラーは code（EMPTY/TOO_LONG/MALFORMED/UNKNOWN_VERSION/CHECKSUM）と丁寧な日本語メッセージ。入力長上限 5万文字
+- ファズテストで「年 10000 以降の日付を生成して RangeError が漏れる」バグを発見し修正（9999-12-31 までに制限、回帰テスト追加）
+- 申し送り: UI は BackupError の message をそのまま表示してよい（textContent で表示すること）
