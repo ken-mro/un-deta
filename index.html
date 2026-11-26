@@ -68,7 +68,56 @@
         <li><span class="legend-swatch" data-status="0" aria-hidden="true"></span>未記録</li>
       </ul>
     </section>
+
+    <section class="backup" id="backup" aria-labelledby="backup-heading">
+      <h2 id="backup-heading">バックアップ</h2>
+      <p class="hint">記録を短い文字列にして保存できます。機種変更や、もしものときに使います。</p>
+
+      <h3>書き出す</h3>
+      <label class="field-label" for="export-text">バックアップ用の文字列</label>
+      <textarea id="export-text" class="code-box" rows="3" readonly spellcheck="false" autocomplete="off"></textarea>
+      <div class="row">
+        <button type="button" class="btn-secondary" id="btn-copy">コピー</button>
+        <span class="muted" id="last-backup"></span>
+      </div>
+
+      <h3>読み込む</h3>
+      <label class="field-label" for="import-text">バックアップの文字列を貼り付け</label>
+      <textarea id="import-text" class="code-box" rows="3" spellcheck="false" autocomplete="off" autocapitalize="off"></textarea>
+      <div class="row">
+        <button type="button" class="btn-secondary" id="btn-import">読み込む</button>
+      </div>
+      <p class="form-error" id="import-error" role="alert"></p>
+      <p class="form-status" id="backup-status" role="status" aria-live="polite"></p>
+    </section>
   </main>
+
+  <dialog class="day-dialog" id="import-dialog" aria-labelledby="import-dialog-title">
+    <h2 id="import-dialog-title" class="day-dialog-title">バックアップの読み込み</h2>
+    <div id="import-step-choose">
+      <p class="dialog-text" id="import-summary"></p>
+      <div class="day-dialog-actions">
+        <button type="button" class="btn-done-small" data-action="merge">統合する</button>
+        <button type="button" class="btn-not-yet" data-action="overwrite">上書きする</button>
+        <button type="button" class="btn-link" data-action="cancel">やめる</button>
+      </div>
+    </div>
+    <div id="import-step-overwrite" hidden>
+      <p class="dialog-text" id="overwrite-warning"></p>
+      <div class="day-dialog-actions">
+        <button type="button" class="btn-danger" data-action="overwrite-confirm">上書きを実行</button>
+        <button type="button" class="btn-link" data-action="cancel">やめる</button>
+      </div>
+    </div>
+    <div id="import-step-conflict" hidden>
+      <p class="dialog-text" id="conflict-text"></p>
+      <div class="day-dialog-actions">
+        <button type="button" class="btn-done-small" data-action="prefer-incoming">読み込む側を優先</button>
+        <button type="button" class="btn-not-yet" data-action="prefer-current">今の記録を優先</button>
+        <button type="button" class="btn-link" data-action="cancel">やめる</button>
+      </div>
+    </div>
+  </dialog>
 
   <dialog class="day-dialog" id="day-dialog" aria-labelledby="day-dialog-title">
     <h2 id="day-dialog-title" class="day-dialog-title"></h2>

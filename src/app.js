@@ -4,6 +4,7 @@ import { STATUS, getStatus, setStatus, clearStatus } from './lib/records.js';
 import { notYetStreak } from './lib/streak.js';
 import { createHeatmapView, formatDateJa } from './ui/heatmap-view.js';
 import { detectPlatform } from './lib/platform.js';
+import { createBackupView } from './ui/backup-view.js';
 import { createStorage, getLocalStorage, requestPersist } from './lib/storage.js';
 
 const WEEKDAYS = ['日', '月', '火', '水', '木', '金', '土'];
@@ -43,6 +44,7 @@ function render() {
   streakEl.querySelector('.streak-count').textContent = `${streak}日`;
 
   heatmap.render(state.records, key);
+  backupView.render();
 }
 
 // ---- ヒートマップと日付ごとの修正 ----
@@ -106,6 +108,16 @@ document.addEventListener('visibilitychange', () => {
     state = storage.load();
     render();
   }
+});
+
+// ---- バックアップ ----
+const backupView = createBackupView({
+  getState: () => state,
+  update: (patch) => {
+    persist({ ...state, ...patch });
+    render();
+  },
+  todayKey,
 });
 
 // ---- ホーム画面に追加していないときの警告と案内 ----

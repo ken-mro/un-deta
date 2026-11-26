@@ -84,3 +84,8 @@
 - やったこと: `tests/e2e/install-guide.spec.js`（UA を iPhone/Android/Windows に切替、standalone は matchMedia を差し替えて再現。Red）→ index.html に警告バナー＋`<details>` の手順、app.js で detectPlatform により出し分け（E2E 54件 pass）
 - 判断: standalone なら非表示。警告文「このままだと記録が消える可能性があります」。手順は折りたたみで、該当 OS 以外の手順は DOM から削除（textContent に混ざらないように）。iOS は Safari で開く旨も案内。PC は一般的な案内＋こまめなバックアップを促す
 - 申し送り: 「下の『バックアップ』」と案内しているので、バックアップ画面はホームの下部に置くこと
+
+## 2026-11-26 タスク2-6: バックアップ画面
+- やったこと: `tests/e2e/backup.spec.js`（9件×2、期待値は src/lib の encodeBackup で計算。Red）→ `src/ui/backup-view.js` とホーム下部のバックアップ節・読み込みダイアログで Green（E2E 72件 pass）
+- 判断: コピー成功で lastBackupKey=今日を保存し「最後のバックアップ: 〜」を表示。クリップボード不可なら文字列を選択して手動コピーを案内（lastBackupKey は更新しない）。読み込みは decode→サマリ表示→「統合／上書き／やめる」。統合で衝突があれば「読み込む側を優先／今の記録を優先」を確認。上書きは今の記録がある場合のみ件数付きで再確認。エラーは BackupError の文言を role=alert に textContent で表示
+- 申し送り: 次の QR 表示は「書き出す」の下に置く想定（同じ encodeBackup の文字列）
