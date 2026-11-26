@@ -1,0 +1,38 @@
+{
+  "permissions": {
+    "allow": [
+      "Read",
+      "Edit",
+      "Write",
+      "Bash(node:*)",
+      "Bash(npm:*)",
+      "Bash(npx:*)",
+      "Bash(bash scripts/verify.sh)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(ls:*)",
+      "Bash(mkdir:*)",
+      "Bash(cat:*)",
+      "Bash(grep:*)"
+    ],
+    "deny": [
+      "Bash(git push:*)",
+      "Bash(git remote:*)",
+      "Bash(git reset --hard:*)",
+      "Bash(rm -rf:*)",
+      "Bash(curl:*)",
+      "Bash(wget:*)",
+      "Edit(scripts/verify.sh)",
+      "Write(scripts/verify.sh)",
+      "Edit(loop.sh)",
+      "Write(loop.sh)",
+      "Edit(SPEC.md)",
+      "Write(SPEC.md)",
+      "Edit(.claude/settings.json)",
+      "Write(.claude/settings.json)"
+    ]
+  }
+}
