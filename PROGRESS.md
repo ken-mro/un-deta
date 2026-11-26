@@ -39,3 +39,8 @@
 - 判断（形式 v1）: 先頭1文字 '1' がバージョン、続けて base64url で [開始日=1970-01-01 からの日数 3B][1日2bit・1Bに4日・下位から][CRC-8]。空データは '1'。1年分で約130文字。空白・改行は無視。エラーは code（EMPTY/TOO_LONG/MALFORMED/UNKNOWN_VERSION/CHECKSUM）と丁寧な日本語メッセージ。入力長上限 5万文字
 - ファズテストで「年 10000 以降の日付を生成して RangeError が漏れる」バグを発見し修正（9999-12-31 までに制限、回帰テスト追加）
 - 申し送り: UI は BackupError の message をそのまま表示してよい（textContent で表示すること）
+
+## 2026-11-26 タスク1-5: インポートの上書き／統合
+- やったこと: `tests/unit/import-merge.test.js`（7件、Red）→ `src/lib/import-merge.js`（overwriteRecords / analyzeImport / mergeRecords）で Green
+- 判断: 衝突＝両方に記録があり値が異なる日。統合は `preferIncoming` の指定が必須（未指定は TypeError＝確認を飛ばせない）。未記録は相手の記録を消さない。analyzeImport で added / same / conflicts / onlyCurrent を返し、UI の確認ダイアログに使う
+- 申し送り: UI では「上書き」選択時に onlyCurrent 件数が消えることを明示して確認するとよい
