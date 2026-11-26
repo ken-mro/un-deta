@@ -51,7 +51,10 @@ function send(res, status, body) {
   res.end(body);
 }
 
-export async function startServer({ root = process.cwd(), port = 4173 } = {}) {
+export async function startServer({ root = process.cwd(), port = 4173, base = '/' } = {}) {
+  if (typeof base !== 'string' || !base.startsWith('/') || !base.endsWith('/')) {
+    throw new TypeError('base は "/" で始まり "/" で終わるパスにしてください（例: /un-deta/）');
+  }
   const rootReal = await realpath(resolve(root));
   const server = createServer(async (req, res) => {
     try {
@@ -59,7 +62,14 @@ export async function startServer({ root = process.cwd(), port = 4173 } = {}) {
         res.setHeader('Allow', 'GET, HEAD');
         return send(res, 405, 'Method Not Allowed');
       }
-      const urlPath = (req.url ?? '/').split('?')[0].split('#')[0];
+      const fullPath = (req.url ?? '/').split('?')[0].split('#')[0];
+      // GitHub Pages と同様、末尾スラッシュなしのサブパスはリダイレクト
+      if (base !== '/' && fullPath === base.slice(0, -1)) {
+        res.writeHead(301, { Location: base });
+        return res.end();
+      }
+      if (!fullPath.startsWith(base)) return send(res, 404, 'Not Found');
+      const urlPath = '/' + fullPath.slice(base.length);
       const file = await resolvePath(rootReal, urlPath);
       if (file === 'bad') return send(res, 400, 'Bad Request');
       if (!file) return send(res, 404, 'Not Found');
@@ -90,6 +100,7 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
   };
   const port = Number(arg('--port', process.env.PORT ?? 4173));
   const root = arg('--root', join(fileURLToPath(new URL('..', import.meta.url))));
-  const server = await startServer({ root, port });
-  console.log(`serving ${root} at http://${HOST}:${server.address().port}/`);
+  const base = arg('--base', '/');
+  const server = await startServer({ root, port, base });
+  console.log(`serving ${root} at http://${HOST}:${server.address().port}${base}`);
 }

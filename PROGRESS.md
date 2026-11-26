@@ -125,3 +125,8 @@
 - やったこと: `tests/unit/sw-precache.test.js`（プリキャッシュ一覧＝src/・icons/・HTML・manifest の実ファイルと完全一致、相対パス、VERSION、同一オリジン GET のみ）と `tests/e2e/offline.spec.js`（オフライン起動・記録・保持、規約／ポリシー表示、クエリ付き起動）を先に書き Red → `sw.js` と app.js での登録で Green（ユニット105件・E2E 110件、WebKit 含む）
 - 判断: install で cache.addAll（cache:'reload'）→ skipWaiting、activate で旧 `un-deta-*` を削除→ clients.claim。遷移はキャッシュ HTML（ignoreSearch、なければ index.html）、その他は stale-while-revalidate。外部オリジン・GET 以外は触らない。addAll が 404 で失敗しないよう terms.html / privacy.html の下書き（作成中）を先に作成し、中身は PLAN 4 で書く
 - 申し送り: ファイルを追加したら sw.js の PRECACHE に足す（ユニットテストが検知する）。アセット更新時は VERSION を上げる。次はサブパス（/un-deta/）配信の E2E
+
+## 2026-11-26 タスク3-3: サブパス配信
+- やったこと: `tests/unit/serve-base.test.js`（5件、Red）→ `scripts/serve.mjs` に `base` オプション（`--base /un-deta/`）を追加して Green。`tests/e2e/subpath.spec.js`（3件×2）はテスト内で startServer({ base }) を起動して検証（E2E 116件 pass）
+- 判断: base 外は 404（絶対パスの混入を検出できる）、末尾スラッシュなしは 301 で base へ。E2E では全レスポンスが /un-deta/ 配下かつ 400 未満であること、manifest の start_url/scope/icons、SW スコープとオフライン起動、フッターリンクと「アプリに戻る」を確認。既存の相対パス設計のため E2E は初回から pass
+- 申し送り: Playwright 設定は変更なし（webServer は 1 つのまま）。次は PLAN 4（terms.html の本文）
