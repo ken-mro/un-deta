@@ -165,3 +165,15 @@
 - やったこと: `tests/unit/readme.test.js`（必須見出し、実在するコマンド・パス、プライバシー要約、効能表現なし。Red）→ README.md を作成して Green（ユニット137件）
 - 判断: 概要／使い方（ホーム画面追加・記録・修正・バックアップ・機種変更と iOS の注意）／プライバシー要約／ローカル起動（serve.mjs、--base）／テスト（pnpm install、playwright install、npm test、test:e2e、verify.sh、依存のセキュリティ設定、アイコン再生成）／GitHub Pages 手順（{{CONTACT}} 差し替え、Pages 設定、sw.js VERSION）
 - 申し送り: 最後は「最終レビュー」。SPEC.md を1項目ずつ照合する
+
+## 2026-11-26 タスク5-4: 最終レビュー（SPEC 照合）— 完了
+- SPEC 照合結果（すべて実装・検証済み）:
+  - コンセプト: 2択・1タップ／日本語 UI／効能表現なし（verify.sh・各ユニット）／相対パス（subpath E2E）
+  - 技術方針: バニラ ESM・ビルドなし／manifest・sw.js・アイコン一式（pwa-manifest）／外部リクエストなし（no-external E2E＋静的チェック、CSP）／完全オフライン（offline E2E）／「データはこの端末の中だけに保存されます」（footer E2E）／ロジックは src/lib の純粋関数（ユニット）／依存は devDependencies のみ
+  - 機能1〜6: home / feedback / streak / heatmap / dark-mode / footer の各 E2E
+  - データ消失対策: persist()（ユニット＋今回追加の persist E2E）／standalone 警告と OS 別案内（install-guide）／バックアップ v1・コピー・貼り付け・QR・上書き／統合・衝突確認・エラー（backup-codec・import-merge・backup・qr）／30日催促（backup-reminder）／機種変更と iOS の保存場所分離（device-change）
+  - 規約・ポリシー: terms / privacy の必須項目（ユニット）、同じデザイン・オフライン表示、ken_mro・{{CONTACT}}・制定日、HUMAN_TODO、実装との整合（policy-consistency E2E）
+  - 品質: README／アクセシビリティ（a11y E2E、コントラスト）／ローカル時刻の日付境界（date ユニットを複数 TZ で確認、E2E は page.clock）
+- 追加したこと: 起動時の persist() 呼び出しを E2E で確認（ミューテーション確認済み）
+- 最終結果: `bash scripts/verify.sh` → VERIFY: PASS（ユニット137件・E2E 152件）。`pnpm audit` 既知の脆弱性なし
+- 完了。残りは HUMAN_TODO.md（{{CONTACT}} 差し替え、規約の専門家確認、実機確認、GitHub Pages 公開）
