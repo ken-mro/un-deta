@@ -5,7 +5,7 @@
 
 ## 0. 土台
 - [x] package.json（type: module、`npm test` = ユニット、`npm run test:e2e` = Playwright）、.gitignore、ディレクトリ構成（`src/`, `src/lib/`, `tests/unit/`, `tests/e2e/`）を作る
-- [ ] `node --test` でユニットテストが動くことを、ダミーではなく最初の本物のテスト（次のタスク）で確認する準備をする。静的配信用の `scripts/serve.mjs`（依存なしの Node 製サーバ）を作る
+- [x] `node --test` でユニットテストが動くことを、ダミーではなく最初の本物のテスト（次のタスク）で確認する準備をする。静的配信用の `scripts/serve.mjs`（依存なしの Node 製サーバ）を作る
 - [ ] Playwright を導入（chromium と webkit の Mobile Safari プロジェクト）。webServer は `scripts/serve.mjs`
 
 ## 1. ロジック（TDD）
