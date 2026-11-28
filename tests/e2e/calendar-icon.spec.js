@@ -42,6 +42,17 @@ test('アイコンがあってもマスの大きさは変わらず、タップ�
   await expect(page.getByRole('dialog')).toBeVisible();
 });
 
+test('日付の数字の位置は、未記録・出た・ちょっと出たのどのマスでもそろう', async ({ page }) => {
+  await seed(page, { records: { '2024-03-04': 1, '2024-03-05': 3 } });
+  await page.goto('/');
+  const numTop = (d) =>
+    day(page, d).evaluate((el) => el.querySelector('.cal-num').getBoundingClientRect().top - el.getBoundingClientRect().top);
+  const base = await numTop('2024-03-06');
+  for (const d of ['2024-03-04', '2024-03-05']) {
+    expect(Math.abs((await numTop(d)) - base)).toBeLessThan(0.5);
+  }
+});
+
 test('アイコンの色はマスの文字色に合わせ、背景に埋もれない', async ({ page }) => {
   await seed(page, { records: { '2024-03-04': 1, '2024-03-05': 3 } });
   await page.goto('/');

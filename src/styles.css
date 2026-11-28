@@ -895,12 +895,14 @@ details[open] > summary > .chevron {
   color: var(--secondary-text);
   font-size: 0.95rem;
   font-variant-numeric: tabular-nums;
-  /* 中身: 日付の数字と、記録した日はその下にキャラクター（マスの外枠・大きさは変えない） */
-  display: flex;
-  flex-direction: column;
+  /* 中身: 上に日付の数字、下にキャラクターの段（マスの外枠・大きさは変えない）。
+     キャラクターの段は未記録の日も同じ高さを取り、数字の位置をどのマスでもそろえる */
+  display: grid;
+  grid-template-rows: auto 1.25rem;
+  justify-items: center;
   align-items: center;
-  justify-content: center;
-  gap: 2px;
+  align-content: center;
+  row-gap: 2px;
 }
 
 .cal-num {
@@ -908,6 +910,7 @@ details[open] > summary > .chevron {
 }
 
 .cal-day .cal-icon {
+  grid-row: 2;
   width: auto;
   height: 1.25rem;
   pointer-events: none; /* なぞる・タップの判定はマス（ボタン）で受ける */
