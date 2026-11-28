@@ -299,3 +299,4 @@
 - 判断: パソコン・タブレットの広い画面も同じ2列にした（Fold 専用の判定はできないため幅と高さで判断）。どちらを表示中かは保存しない（保存先を un-deta:v1 だけに保つため）。
 - テスト: tests/e2e/two-pane.spec.js（Fold 縦横・閉じた状態・スマホ縦横・Duo は Chromium で画面の継ぎ目をエミュレーション）。パソコン幅で走るヒートマップのテストは `showHistory()` で切り替えてから確認。sw.js VERSION 20。verify PASS（unit 164 / E2E 294）。
 - 申し送り: SPEC.md には未反映（HUMAN_TODO に記載）。実機の Fold / Duo での確認は未実施。
+- 整理: テストの切り替えボタンの指定を helpers.js の `widgetSwitch()` にまとめた。verify PASS。

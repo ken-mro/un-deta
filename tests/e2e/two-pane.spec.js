@@ -1,13 +1,13 @@
 // 折りたたみ端末（Fold を開いた状態・Duo の2画面）など広い画面: 左にホーム・バックアップ・フッター、
 // 右にカレンダーと「これまでの記録」を切り替えて表示する。スマホの幅では今までどおり縦に並べる。
 import { test, expect } from '@playwright/test';
-import { seed, fixToday } from './helpers.js';
+import { seed, fixToday, widgetSwitch } from './helpers.js';
 
 test.beforeEach(async ({ page }) => fixToday(page));
 
 const calendar = (page) => page.locator('#calendar');
 const history = (page) => page.locator('#history');
-const tab = (page, name) => page.getByRole('group', { name: '右側に表示する内容' }).getByRole('button', { name });
+const tab = (page, name) => widgetSwitch(page).getByRole('button', { name });
 const rect = (loc) => loc.evaluate((el) => el.getBoundingClientRect().toJSON());
 
 test.describe('Fold を開いた状態（約 690×830）', () => {
@@ -91,7 +91,7 @@ for (const [label, viewport] of [
 
     test('今までどおり縦に並べ、カレンダーと「これまでの記録」を両方表示する（切り替えボタンなし）', async ({ page }) => {
       await page.goto('/');
-      await expect(page.getByRole('group', { name: '右側に表示する内容' })).toBeHidden();
+      await expect(widgetSwitch(page)).toBeHidden();
       await expect(calendar(page)).toBeVisible();
       await expect(history(page)).toBeVisible();
       const order = await page.evaluate(() =>

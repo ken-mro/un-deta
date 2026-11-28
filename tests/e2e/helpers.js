@@ -28,8 +28,11 @@ export async function openBackup(page) {
   if ((await panel.getAttribute('open')) === null) await panel.locator('> summary').click();
 }
 
+/** 広い画面の右側の切り替え（カレンダー／これまでの記録）。スマホの幅では出ない */
+export const widgetSwitch = (page) => page.getByRole('group', { name: '右側に表示する内容' });
+
 /** 広い画面（右側が切り替え表示）なら「これまでの記録」に切り替える。スマホの幅では両方出ているので何もしない */
 export async function showHistory(page) {
-  const btn = page.getByRole('group', { name: '右側に表示する内容' }).getByRole('button', { name: 'これまでの記録' });
+  const btn = widgetSwitch(page).getByRole('button', { name: 'これまでの記録' });
   if (await btn.isVisible()) await btn.click();
 }
