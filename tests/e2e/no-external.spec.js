@@ -1,6 +1,6 @@
 // 外部リクエストが一切ないこと（同一オリジン以外への要求があれば失敗）
 import { test, expect } from '@playwright/test';
-import { fixToday } from './helpers.js';
+import { fixToday, openBackup } from './helpers.js';
 
 test('全ページ・全機能を使っても、同一オリジン以外への通信が発生しない', async ({ page, context, baseURL }) => {
   await fixToday(page);
@@ -41,6 +41,7 @@ test('全ページ・全機能を使っても、同一オリジン以外への�
   await page.locator('[data-cal-date="2024-03-01"]').click();
   await page.getByRole('dialog').getByRole('button', { name: '出た', exact: true }).click();
   await page.getByText('追加のしかた').click();
+  await openBackup(page);
   await page.getByText('QRコードで表示').click();
   await page.getByText('機種変更するときは').click();
   const section = page.getByRole('region', { name: 'バックアップ' });

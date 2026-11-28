@@ -1,6 +1,6 @@
 // アクセシビリティ: ラベル、構造、キーボード操作、フォーカス表示、タップ領域
 import { test, expect } from '@playwright/test';
-import { fixToday, seed, readSaved } from './helpers.js';
+import { fixToday, seed, readSaved, openBackup } from './helpers.js';
 
 test.beforeEach(async ({ page }) => fixToday(page));
 
@@ -73,6 +73,7 @@ test('キーボードだけで過去の日を修正できる（カレンダー �
 test('キーボードだけでバックアップを読み込める', async ({ page, browserName }) => {
   await seed(page, { records: { '2024-03-01': 1 } });
   await page.goto('/');
+  await openBackup(page);
   const section = page.getByRole('region', { name: 'バックアップ' });
   const exported = await section.getByLabel('バックアップ用の文字列').inputValue();
   await section.getByLabel('バックアップの文字列を貼り付け').focus();

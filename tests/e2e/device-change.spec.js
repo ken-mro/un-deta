@@ -1,11 +1,12 @@
 // 機種変更手順の説明（iOS のストレージ分離を踏まえた内容）
 import { test, expect } from '@playwright/test';
-import { fixToday } from './helpers.js';
+import { fixToday, openBackup } from './helpers.js';
 
 test.beforeEach(async ({ page }) => fixToday(page));
 
 test('機種変更の手順が順番どおりに書かれている', async ({ page }) => {
   await page.goto('/');
+  await openBackup(page);
   await page.getByText('機種変更するときは').click();
   const steps = page.getByTestId('device-change-steps').locator('li');
   await expect(steps).toHaveCount(4);
@@ -19,6 +20,7 @@ test('機種変更の手順が順番どおりに書かれている', async ({ pa
 
 test('iPhone では Safari とホーム画面のアプリで保存場所が別であることを説明する', async ({ page }) => {
   await page.goto('/');
+  await openBackup(page);
   await page.getByText('機種変更するときは').click();
   const note = page.getByTestId('ios-storage-note');
   await expect(note).toBeVisible();

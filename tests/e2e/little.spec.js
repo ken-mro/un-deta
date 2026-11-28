@@ -1,6 +1,6 @@
 // 「ちょっと出た」の記録（ホーム）
 import { test, expect } from '@playwright/test';
-import { seed, fixToday, readSaved } from './helpers.js';
+import { seed, fixToday, readSaved, openBackup } from './helpers.js';
 
 test.beforeEach(async ({ page }) => fixToday(page)); // 今日 = 2024-03-10
 
@@ -100,6 +100,7 @@ test('「ちょっと出た」はバックアップに含まれ、読み込み�
   const { encodeBackup } = await import('../../src/lib/backup-codec.js');
   await seed(page, { records: { '2024-03-01': 3 } });
   await page.goto('/');
+  await openBackup(page);
   const section = page.getByRole('region', { name: 'バックアップ' });
   await expect(section.getByLabel('バックアップ用の文字列')).toHaveValue(encodeBackup({ '2024-03-01': 3 }));
   await section.getByLabel('バックアップの文字列を貼り付け').fill(encodeBackup({ '2024-02-20': 3, '2024-02-21': 2, '2024-02-22': 1 }));
@@ -118,6 +119,7 @@ test.describe('統合で「出た」と「ちょっと出た」がぶつかる�
     const { encodeBackup } = await import('../../src/lib/backup-codec.js');
     await seed(page, { records: CURRENT });
     await page.goto('/');
+    await openBackup(page);
     const section = page.getByRole('region', { name: 'バックアップ' });
     await section.getByLabel('バックアップの文字列を貼り付け').fill(encodeBackup(INCOMING));
     await section.getByRole('button', { name: '読み込む' }).click();

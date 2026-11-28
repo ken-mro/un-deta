@@ -57,6 +57,7 @@ function render() {
 
 // ---- バックアップ催促 ----
 $('btn-reminder-go').addEventListener('click', () => {
+  $('backup-panel').open = true;
   const copy = $('btn-copy');
   copy.scrollIntoView({ block: 'center', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
   copy.focus({ preventScroll: true });
@@ -76,23 +77,53 @@ function openDayDialog(date, view) {
   editingDate = date;
   returnFocus = view;
   $('day-dialog-title').textContent = formatDateJa(date);
-  $('day-dialog-current').textContent = `いまの記録: ${STATUS_NAME[getStatus(state.records, date)]}`;
+  const current = getStatus(state.records, date);
+  $('day-dialog-current').textContent = `いまの記録: ${STATUS_NAME[current]}`;
+  dayDialog.querySelectorAll('[data-set][aria-pressed]').forEach((b) => {
+    b.setAttribute('aria-pressed', String(Number(b.dataset.set) === current));
+    b.disabled = false;
+  });
+  dayDialog.querySelector('[data-testid="day-celebration"]').hidden = true;
   dayDialog.showModal();
 }
 
 const heatmap = createHeatmapView($('heatmap'));
 const calendar = createCalendarView($('calendar'), (date) => openDayDialog(date, calendar));
 
+// 記録してから閉じるまでの時間（演出を見せる。reduced-motion では短く）
+const DAY_CLOSE_DELAY_MS = 1300;
+const DAY_CLOSE_DELAY_REDUCED_MS = 600;
+let dayCloseTimer;
+
 dayDialog.addEventListener('click', (e) => {
   const btn = e.target.closest('button');
-  if (!btn) return;
-  if (btn.dataset.set !== undefined && editingDate) {
-    persist({ ...state, records: setStatus(state.records, editingDate, Number(btn.dataset.set)) });
+  if (!btn || btn.disabled) return;
+  if (btn.dataset.set === undefined || !editingDate) {
+    dayDialog.close();
+    return;
   }
-  dayDialog.close();
+  const status = Number(btn.dataset.set);
+  if (status === STATUS.NONE) {
+    persist({ ...state, records: clearStatus(state.records, editingDate) });
+    dayDialog.close();
+    return;
+  }
+  // 今日の記録と同じように: すぐ保存して、押した感触と「すっきり」の演出を見せてから閉じる
+  persist({ ...state, records: setStatus(state.records, editingDate, status) });
+  render();
+  $('day-dialog-current').textContent = `いまの記録: ${STATUS_NAME[status]}`;
+  dayDialog.querySelectorAll('[data-set][aria-pressed]').forEach((b) => {
+    b.setAttribute('aria-pressed', String(Number(b.dataset.set) === status));
+    b.disabled = true; // 演出中の二度押しを防ぐ
+  });
+  celebrate(dayDialog.querySelector('[data-testid="day-celebration"]'), status);
+  clearTimeout(dayCloseTimer);
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  dayCloseTimer = setTimeout(() => dayDialog.close(), reduced ? DAY_CLOSE_DELAY_REDUCED_MS : DAY_CLOSE_DELAY_MS);
 });
 
 dayDialog.addEventListener('close', () => {
+  clearTimeout(dayCloseTimer);
   render();
   if (editingDate) returnFocus?.focus(editingDate);
   editingDate = null;
@@ -100,24 +131,26 @@ dayDialog.addEventListener('close', () => {
 });
 
 // 押下時の演出（見た目だけ。読み上げは状態テキストで行う）
-let celebrationTimer;
-function celebrate(status) {
-  const fx = document.querySelector('[data-testid="celebration"]');
+const celebrationTimers = new WeakMap();
+function celebrate(fx, status) {
   fx.querySelector('.celebration-text').textContent = status === STATUS.LITTLE ? 'ちょっとすっきり' : 'すっきり！';
   fx.classList.toggle('is-quiet', status === STATUS.LITTLE);
   fx.hidden = true;
   void fx.offsetWidth; // アニメーションを最初から再生し直す
   fx.hidden = false;
-  clearTimeout(celebrationTimer);
-  celebrationTimer = setTimeout(() => {
-    fx.hidden = true;
-  }, 1500);
+  clearTimeout(celebrationTimers.get(fx));
+  celebrationTimers.set(
+    fx,
+    setTimeout(() => {
+      fx.hidden = true;
+    }, 1500),
+  );
 }
 
 function recordToday(status) {
   persist({ ...state, records: setStatus(state.records, todayKey(), status) });
   render();
-  celebrate(status);
+  celebrate(document.querySelector('[data-testid="celebration"]'), status);
 }
 
 $('btn-done').addEventListener('click', () => recordToday(STATUS.DONE));

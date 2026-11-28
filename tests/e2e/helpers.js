@@ -17,3 +17,9 @@ export async function seed(page, { records = {}, lastBackupKey = null, dismissed
 export const fixToday = (page, date = new Date(2024, 2, 10, 10, 0, 0)) => page.clock.install({ time: date });
 
 export const readSaved = (page) => page.evaluate((key) => JSON.parse(localStorage.getItem(key) ?? 'null'), STORAGE_KEY);
+
+/** 最初は閉じているバックアップ欄を開く（すでに開いていればそのまま） */
+export async function openBackup(page) {
+  const panel = page.locator('.backup-panel');
+  if ((await panel.getAttribute('open')) === null) await panel.locator('> summary').click();
+}
