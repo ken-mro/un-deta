@@ -54,3 +54,8 @@ test('催促の「バックアップする」で、閉じていたバックア�
   await expect(page.locator('.backup-panel')).toHaveAttribute('open', '');
   await expect(page.getByRole('region', { name: 'バックアップ' }).getByRole('button', { name: 'コピー' })).toBeFocused();
 });
+
+test('「追加のしかた」の見出しには「タップで開く」などの補足文言を出さない', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.getByTestId('install-guide').locator('summary')).toHaveText('追加のしかた');
+});

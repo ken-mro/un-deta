@@ -587,17 +587,6 @@ details[open] > summary > .chevron {
   transform: rotate(45deg);
 }
 
-.summary-hint {
-  margin-left: auto;
-  font-size: 0.8rem;
-  font-weight: 600;
-  opacity: 0.85;
-}
-
-details[open] > summary > .summary-hint {
-  display: none;
-}
-
 /* ---- バックアップ ---- */
 .backup {
   margin: 2.5rem 0 2rem;
