@@ -525,7 +525,24 @@ button {
   padding-left: 1.4rem;
 }
 
-/* ---- 開閉できる見出し（details / summary）: 押せると分かるよう、枠と矢印を付ける ---- */
+/* ---- 開閉できる項目（details / summary）: 色付きの箱に見出しと中身を入れる（「機種変更するときは」の形にそろえる） ---- */
+.install-guide,
+.backup-panel,
+.qr-details,
+.device-change {
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius);
+  background: var(--secondary);
+  color: var(--secondary-text);
+}
+
+/* バックアップ欄の中の箱は、外の箱と区別できる色にする */
+.backup-panel .qr-details,
+.backup-panel .device-change {
+  background: var(--surface);
+  color: var(--text);
+}
+
 .install-guide > summary,
 .backup-panel > summary,
 .qr-details > summary,
@@ -534,10 +551,6 @@ button {
   align-items: center;
   gap: 0.6rem;
   min-height: 2.75rem;
-  padding: 0.45rem 0.9rem;
-  border: 1.5px solid currentColor;
-  border-radius: 12px;
-  background: color-mix(in srgb, var(--surface) 70%, transparent);
   cursor: pointer;
   font-weight: 700;
   list-style: none;
@@ -551,11 +564,11 @@ button {
   display: none;
 }
 
-.install-guide > summary:active,
-.backup-panel > summary:active,
-.qr-details > summary:active,
-.device-change > summary:active {
-  transform: scale(0.98);
+.install-guide:has(> summary:active),
+.backup-panel:has(> summary:active),
+.qr-details:has(> summary:active),
+.device-change:has(> summary:active) {
+  filter: brightness(0.96);
 }
 
 /* 閉じているときは右向き、開くと下向きになる矢印 */
@@ -595,11 +608,6 @@ details[open] > summary > .summary-hint {
   margin: 0;
 }
 
-.backup-panel > summary {
-  padding-block: 0.6rem;
-  border-color: var(--border);
-  color: var(--text);
-}
 
 .backup-summary-text {
   display: flex;
@@ -609,11 +617,10 @@ details[open] > summary > .summary-hint {
 .summary-sub {
   font-size: 0.85rem;
   font-weight: 400;
-  color: var(--text-muted);
 }
 
 .backup-panel[open] > summary {
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.25rem;
 }
 
 .backup h3 {
@@ -718,19 +725,6 @@ details[open] > summary > .summary-hint {
 /* ---- 機種変更の手順 ---- */
 .device-change {
   margin-top: 1.5rem;
-}
-
-.device-change[open] {
-  padding: 0 0 0.75rem;
-  border-radius: var(--radius);
-  background: var(--secondary);
-  color: var(--secondary-text);
-}
-
-.device-change[open] ol,
-.device-change[open] .note {
-  padding-right: 1rem;
-  margin-left: 1rem;
 }
 
 

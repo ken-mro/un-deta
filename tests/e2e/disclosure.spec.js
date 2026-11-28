@@ -6,16 +6,16 @@ test.beforeEach(async ({ page }) => fixToday(page));
 
 const SUMMARIES = ['.install-guide summary', '.backup-panel > summary', '.qr-details summary', '.device-change summary'];
 
-test('開閉できる見出しには、ボタンらしい枠と開閉の矢印がある', async ({ page }) => {
+test('開閉できる項目は「機種変更するときは」と同じ色付きの箱で、開閉の矢印がある', async ({ page }) => {
   await page.goto('/');
   await page.locator('.backup-panel > summary').click();
   for (const sel of SUMMARIES) {
     const summary = page.locator(sel);
     const look = await summary.evaluate((el) => {
-      const s = getComputedStyle(el);
-      return { border: parseFloat(s.borderTopWidth), radius: parseFloat(s.borderTopLeftRadius), cursor: s.cursor };
+      const box = getComputedStyle(el.parentElement);
+      return { bg: box.backgroundColor, radius: parseFloat(box.borderTopLeftRadius), cursor: getComputedStyle(el).cursor };
     });
-    expect(look.border, `${sel} の枠`).toBeGreaterThanOrEqual(1);
+    expect(look.bg, `${sel} の箱の色`).not.toMatch(/^rgba\(0, 0, 0, 0\)$|transparent/);
     expect(look.radius, `${sel} の角丸`).toBeGreaterThan(0);
     expect(look.cursor, sel).toBe('pointer');
     await expect(summary.locator('.chevron'), `${sel} の矢印`).toBeVisible();
