@@ -7,6 +7,7 @@ import { detectPlatform } from './lib/platform.js';
 import { createBackupView } from './ui/backup-view.js';
 import { createCalendarView } from './ui/calendar-view.js';
 import { shouldRemindBackup } from './lib/backup-reminder.js';
+import { paintDay } from './lib/bulk-paint.js';
 import { createStorage, getLocalStorage, requestPersist } from './lib/storage.js';
 
 const WEEKDAYS = ['日', '月', '火', '水', '木', '金', '土'];
@@ -88,7 +89,24 @@ function openDayDialog(date, view) {
 }
 
 const heatmap = createHeatmapView($('heatmap'));
-const calendar = createCalendarView($('calendar'), (date) => openDayDialog(date, calendar));
+// まとめて記録: 1日ごとにすぐ保存し、ひと筆が終わったら画面全体を描き直す
+let bulkSnapshot = null;
+const calendar = createCalendarView($('calendar'), (date) => openDayDialog(date, calendar), {
+  start() {
+    bulkSnapshot = state.records;
+  },
+  paint(date, target) {
+    const next = paintDay(state.records, date, target, todayKey());
+    if (next === state.records) return false;
+    persist({ ...state, records: next });
+    return true;
+  },
+  commit: () => render(),
+  revert() {
+    if (bulkSnapshot) persist({ ...state, records: bulkSnapshot });
+    render();
+  },
+});
 
 // 記録してから閉じるまでの時間（演出を見せる。reduced-motion では短く）
 const DAY_CLOSE_DELAY_MS = 1300;

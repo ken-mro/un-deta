@@ -111,7 +111,17 @@
     </section>
 
     <section class="calendar" id="calendar" aria-labelledby="calendar-heading">
-      <h2 id="calendar-heading">カレンダー</h2>
+      <div class="calendar-head">
+        <h2 id="calendar-heading">カレンダー</h2>
+        <button type="button" class="btn-secondary" id="btn-bulk">まとめて記録</button>
+      </div>
+      <div class="bulk-bar" id="bulk-bar" hidden>
+        <div class="bulk-brushes" role="group" aria-label="記録する内容">
+          <button type="button" class="bulk-brush" data-brush="1" aria-pressed="true"><span class="legend-swatch" data-status="1" aria-hidden="true"></span>出た</button>
+          <button type="button" class="bulk-brush" data-brush="3" aria-pressed="false"><span class="legend-swatch" data-status="3" aria-hidden="true"></span>ちょっと出た</button>
+        </div>
+        <p class="bulk-help">日付をタップするか、指でなぞって記録します。同じ記録の日をもう一度タップすると消えます。</p>
+      </div>
       <div class="calendar-nav">
         <button type="button" class="calendar-nav-btn" data-cal-nav="prev" aria-label="前の月">‹</button>
         <p class="calendar-heading-text" aria-live="polite">
@@ -124,6 +134,11 @@
         <span>日</span><span>月</span><span>火</span><span>水</span><span>木</span><span>金</span><span>土</span>
       </div>
       <div class="calendar-grid" role="group"></div>
+      <div class="bulk-actions" id="bulk-actions" hidden>
+        <button type="button" class="btn-link" id="btn-bulk-revert">変更を取り消す</button>
+        <button type="button" class="btn-done-small" id="btn-bulk-done">完了</button>
+      </div>
+      <p class="visually-hidden" id="bulk-status" role="status" aria-live="polite"></p>
     </section>
 
     <section class="history" aria-labelledby="history-heading">

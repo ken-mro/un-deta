@@ -1,17 +1,29 @@
-// 月のカレンダーの描画（日付タップで修正ダイアログを開く）
+// 月のカレンダーの描画（日付タップで修正ダイアログを開く。「まとめて記録」中はタップ・なぞりで直接記録する）
 import { buildMonthCalendar, addMonths, monthOf } from '../lib/month-calendar.js';
 import { addDays, isValidDateKey } from '../lib/date.js';
 import { STATUS } from '../lib/records.js';
+import { strokeTarget } from '../lib/bulk-paint.js';
 import { formatDateJa } from './heatmap-view.js';
 
 const WEEKDAYS = ['日', '月', '火', '水', '木', '金', '土'];
 const STATUS_LABEL = { [STATUS.NONE]: '未記録', [STATUS.DONE]: '出た', [STATUS.LITTLE]: 'ちょっと出た' };
 
 /**
+ * @typedef {object} BulkHandlers まとめて記録の保存先（app.js が持つ状態を変える）
+ * @property {() => void} start まとめて記録を始めたとき（取り消し用に今の記録を覚える）
+ * @property {(date: string, target: number) => boolean} paint 1日分を記録する。変わったら true
+ * @property {() => void} commit ひと筆が終わったとき（画面全体を描き直す）
+ * @property {() => void} revert 始める前の記録に戻す
+ */
+
+const dayLabel = (date, status, isToday) => `${formatDateJa(date)} ${STATUS_LABEL[status]}${isToday ? '（今日）' : ''}`;
+
+/**
  * @param {HTMLElement} root カレンダー節の要素
  * @param {(date: string) => void} onSelect 日付が選ばれたとき
+ * @param {BulkHandlers} bulk まとめて記録
  */
-export function createCalendarView(root, onSelect) {
+export function createCalendarView(root, onSelect, bulk) {
   const title = root.querySelector('[data-testid="calendar-title"]');
   const summary = root.querySelector('[data-testid="calendar-summary"]');
   const grid = root.querySelector('.calendar-grid');
@@ -73,7 +85,108 @@ export function createCalendarView(root, onSelect) {
     const btn = e.target.closest('[data-cal-date]');
     if (!btn || btn.disabled) return;
     focusDate = btn.dataset.calDate;
+    if (bulkOn) {
+      // タップ・なぞりは pointer イベントで処理済み。キーボード（Enter / Space）のときだけここで1日分を切り替える
+      if (e.detail === 0) {
+        paintStroke(btn);
+        endStroke();
+        cellFor(focusDate)?.focus();
+      }
+      return;
+    }
     onSelect(btn.dataset.calDate);
+  });
+
+  // ---- まとめて記録 ----
+  const toggleBtn = root.querySelector('#btn-bulk');
+  const bar = root.querySelector('#bulk-bar');
+  const actions = root.querySelector('#bulk-actions');
+  const bulkStatus = root.querySelector('#bulk-status');
+  const brushBtns = [...root.querySelectorAll('[data-brush]')];
+  let bulkOn = false;
+  let brush = STATUS.DONE;
+  let stroke = null; // { target, last, dates: [] }
+
+  function setBulk(on) {
+    bulkOn = on;
+    bar.hidden = !on;
+    actions.hidden = !on;
+    toggleBtn.hidden = on;
+    root.classList.toggle('is-bulk', on);
+    bulkStatus.textContent = '';
+    if (on) bulk.start();
+  }
+
+  toggleBtn.addEventListener('click', () => {
+    setBulk(true);
+    brushBtns.find((b) => Number(b.dataset.brush) === brush)?.focus();
+  });
+  root.querySelector('#btn-bulk-done').addEventListener('click', () => {
+    setBulk(false);
+    toggleBtn.focus();
+  });
+  root.querySelector('#btn-bulk-revert').addEventListener('click', () => {
+    bulk.revert();
+    bulkStatus.textContent = 'まとめて記録で変えた分を取り消しました';
+  });
+  for (const b of brushBtns) {
+    b.addEventListener('click', () => {
+      brush = Number(b.dataset.brush);
+      brushBtns.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    });
+  }
+
+  /** ひと筆に1日を加える（最初の日で「付ける」か「消す」かが決まる） */
+  function paintStroke(btn) {
+    if (!btn || btn.disabled) return;
+    const date = btn.dataset.calDate;
+    if (!stroke) stroke = { target: strokeTarget(Number(btn.dataset.status), brush), last: null, dates: [] };
+    if (stroke.last === date) return;
+    stroke.last = date;
+    if (!bulk.paint(date, stroke.target)) return;
+    stroke.dates.push(date);
+    btn.dataset.status = String(stroke.target);
+    btn.setAttribute('aria-label', dayLabel(date, stroke.target, date === last.todayKey));
+    btn.classList.remove('is-painted');
+    void btn.offsetWidth; // 続けて塗っても動きを最初から
+    btn.classList.add('is-painted');
+  }
+
+  function endStroke() {
+    if (!stroke) return;
+    const { target, dates } = stroke;
+    stroke = null;
+    if (dates.length === 0) return;
+    const subject = dates.length === 1 ? formatDateJa(dates[0]) : `${dates.length}日分`;
+    bulkStatus.textContent = target === STATUS.NONE ? `${subject}の記録を消しました` : `${subject}を「${STATUS_LABEL[target]}」にしました`;
+    bulk.commit();
+  }
+
+  const cellAt = (x, y) => {
+    const el = document.elementFromPoint(x, y)?.closest?.('[data-cal-date]');
+    return el && grid.contains(el) ? el : null;
+  };
+
+  function onMove(e) {
+    if (stroke) paintStroke(cellAt(e.clientX, e.clientY));
+  }
+  function onUp() {
+    window.removeEventListener('pointermove', onMove);
+    window.removeEventListener('pointerup', onUp);
+    window.removeEventListener('pointercancel', onUp);
+    endStroke();
+  }
+
+  grid.addEventListener('pointerdown', (e) => {
+    if (!bulkOn || e.button !== 0) return;
+    const btn = e.target.closest('[data-cal-date]');
+    if (!btn || btn.disabled) return;
+    e.preventDefault(); // 文字の選択・長押しメニューを出さない
+    stroke = null;
+    paintStroke(btn);
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onUp);
+    window.addEventListener('pointercancel', onUp);
   });
 
   function render(records, todayKey) {
@@ -98,7 +211,7 @@ export function createCalendarView(root, onSelect) {
       btn.dataset.calDate = c.date;
       btn.dataset.status = String(c.status);
       btn.textContent = String(c.day);
-      btn.setAttribute('aria-label', `${formatDateJa(c.date)} ${STATUS_LABEL[c.status]}${c.isToday ? '（今日）' : ''}`);
+      btn.setAttribute('aria-label', dayLabel(c.date, c.status, c.isToday));
       if (c.isToday) btn.setAttribute('aria-current', 'date');
       if (c.isFuture) btn.disabled = true;
       btn.tabIndex = c.date === focusDate ? 0 : -1;

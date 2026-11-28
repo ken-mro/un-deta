@@ -1,6 +1,6 @@
 // service worker: 全アセットをプリキャッシュし、オフラインで動かす。外部オリジンへのリクエストは扱わない。
 // アセットを更新したら VERSION を上げること（古いキャッシュは activate 時に削除される）。
-const VERSION = '13';
+const VERSION = '14';
 const CACHE = `un-deta-${VERSION}`;
 
 const PRECACHE = [
@@ -13,6 +13,7 @@ const PRECACHE = [
   './src/styles.css',
   './src/lib/backup-codec.js',
   './src/lib/backup-reminder.js',
+  './src/lib/bulk-paint.js',
   './src/lib/date.js',
   './src/lib/heatmap.js',
   './src/lib/import-merge.js',
