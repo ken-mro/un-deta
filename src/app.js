@@ -6,6 +6,7 @@ import { createHeatmapView, formatDateJa } from './ui/heatmap-view.js';
 import { detectPlatform } from './lib/platform.js';
 import { createBackupView } from './ui/backup-view.js';
 import { createCalendarView } from './ui/calendar-view.js';
+import { createWidgetSwitch } from './ui/widget-switch.js';
 import { shouldRemindBackup } from './lib/backup-reminder.js';
 import { paintDay } from './lib/bulk-paint.js';
 import { createStorage, getLocalStorage, requestPersist } from './lib/storage.js';
@@ -102,6 +103,10 @@ function openDayDialog(date, view) {
 }
 
 const heatmap = createHeatmapView($('heatmap'));
+// 広い画面の右側: カレンダー／これまでの記録の切り替え。表示されたヒートマップは直近の週が見える位置へ
+createWidgetSwitch($('widgets'), (name) => {
+  if (name === 'history') heatmap.scrollToEnd();
+});
 // カレンダーの各マスに出すアイコンは、ホーム画面のキャラクターと同じ絵を使う
 const calendarIcons = {
   [STATUS.DONE]: $('btn-done').querySelector('svg'),

@@ -1,6 +1,6 @@
 // 「ちょっと出た」の記録（ホーム）
 import { test, expect } from '@playwright/test';
-import { seed, fixToday, readSaved, openBackup, calendar, day } from './helpers.js';
+import { seed, fixToday, readSaved, openBackup, calendar, day, showHistory } from './helpers.js';
 
 test.beforeEach(async ({ page }) => fixToday(page)); // 今日 = 2024-03-10
 
@@ -85,6 +85,7 @@ test.describe('カレンダー・ヒートマップ・修正ダイアログ', ()
   test('ヒートマップは「ちょっと出た」を別の色で表示し、凡例は3つ', async ({ page }) => {
     await seed(page, { records: { '2024-03-01': 1, '2024-03-02': 3 } });
     await page.goto('/');
+    await showHistory(page);
     await expect(page.locator('[data-date="2024-03-02"]')).toHaveAttribute('data-status', '3');
     const bg = (date) => page.locator(`[data-date="${date}"]`).evaluate((el) => getComputedStyle(el).backgroundColor);
     expect(await bg('2024-03-02')).not.toBe(await bg('2024-03-01'));

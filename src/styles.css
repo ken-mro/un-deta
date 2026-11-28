@@ -1068,3 +1068,105 @@ details[open] > summary > .chevron {
 .bulk-actions .btn-done-small {
   min-width: 7rem;
 }
+
+/* ---- 右側の欄の切り替え（カレンダー／これまでの記録）。スマホの幅では出さず、両方を縦に並べる ---- */
+.widget-switch {
+  display: none;
+}
+
+/* ---- 広い画面（折りたたみ端末を開いたとき・2画面の端末・タブレット）: 左右に分ける ----
+   左: ホーム・バックアップ・フッター（ページと一緒にスクロール）
+   右: カレンダーと「これまでの記録」を切り替えて表示（画面に固定し、中だけスクロール）
+   低い横向き（スマホの横向き）は今までどおり1列 */
+@media (min-width: 600px) and (min-height: 480px) {
+  :root {
+    --pane-left-end: 50%; /* 左側の右端 */
+    --pane-right-start: 50%; /* 右側の左端 */
+  }
+
+  body {
+    padding-right: calc(100% - var(--pane-left-end));
+  }
+
+  .widgets {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: var(--pane-right-start);
+    right: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: calc(env(safe-area-inset-top) + 1.5rem) calc(env(safe-area-inset-right) + 1.25rem) calc(env(safe-area-inset-bottom) + 1.5rem) 1.25rem;
+    border-left: 1px solid var(--border);
+    background: var(--bg);
+  }
+
+  .widgets > * {
+    max-width: 36rem;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .widgets > .calendar,
+  .widgets > .history {
+    margin-top: 1rem;
+  }
+
+  .widgets[data-active="calendar"] > .history,
+  .widgets[data-active="history"] > .calendar {
+    display: none;
+  }
+
+  /* 見出しは切り替えボタンと同じ言葉なので、画面には出さず読み上げ用に残す */
+  .widgets #calendar-heading,
+  .widgets #history-heading {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .widgets .calendar-head {
+    justify-content: flex-end;
+  }
+
+  .widget-switch {
+    display: flex;
+    gap: 0.25rem;
+    padding: 0.25rem;
+    border-radius: 999px;
+    background: var(--secondary);
+  }
+
+  .widget-switch-btn {
+    flex: 1;
+    min-height: 2.75rem;
+    padding: 0.4rem 0.75rem;
+    border: none;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--secondary-text);
+    font: inherit;
+    font-weight: 700;
+  }
+
+  .widget-switch-btn[aria-pressed="true"] {
+    background: var(--surface);
+    color: var(--text);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
+  }
+}
+
+/* 2画面の端末（Duo など）で両方の画面にまたがるとき: 左の画面と右の画面に分け、継ぎ目（ヒンジ）に何も置かない */
+@media (min-width: 600px) and (min-height: 480px) and (horizontal-viewport-segments: 2) {
+  :root {
+    --pane-left-end: env(viewport-segment-right 0 0);
+    --pane-right-start: env(viewport-segment-left 1 0);
+  }
+
+  .widgets {
+    border-left: none;
+  }
+}

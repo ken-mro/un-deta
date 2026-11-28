@@ -27,3 +27,9 @@ export async function openBackup(page) {
   const panel = page.locator('.backup-panel');
   if ((await panel.getAttribute('open')) === null) await panel.locator('> summary').click();
 }
+
+/** 広い画面（右側が切り替え表示）なら「これまでの記録」に切り替える。スマホの幅では両方出ているので何もしない */
+export async function showHistory(page) {
+  const btn = page.getByRole('group', { name: '右側に表示する内容' }).getByRole('button', { name: 'これまでの記録' });
+  if (await btn.isVisible()) await btn.click();
+}

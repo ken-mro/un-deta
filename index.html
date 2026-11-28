@@ -110,47 +110,54 @@
       <p class="save-error" id="save-error" role="alert" hidden>記録を保存できませんでした。ブラウザの設定（プライベートブラウズなど）をご確認ください。</p>
     </section>
 
-    <section class="calendar" id="calendar" aria-labelledby="calendar-heading">
-      <div class="calendar-head">
-        <h2 id="calendar-heading">カレンダー</h2>
-        <button type="button" class="btn-secondary" id="btn-bulk">まとめて記録</button>
+    <!-- 広い画面（折りたたみ端末を開いたとき・2画面）では右側に固定して、カレンダーと「これまでの記録」を切り替える -->
+    <div class="widgets" id="widgets">
+      <div class="widget-switch" role="group" aria-label="右側に表示する内容">
+        <button type="button" class="widget-switch-btn" data-widget="calendar" aria-controls="calendar" aria-pressed="true">カレンダー</button>
+        <button type="button" class="widget-switch-btn" data-widget="history" aria-controls="history" aria-pressed="false">これまでの記録</button>
       </div>
-      <div class="bulk-bar" id="bulk-bar" hidden>
-        <div class="bulk-brushes" role="group" aria-label="記録する内容">
-          <button type="button" class="bulk-brush" data-brush="1" aria-pressed="true"><span class="legend-swatch" data-status="1" aria-hidden="true"></span>出た</button>
-          <button type="button" class="bulk-brush" data-brush="3" aria-pressed="false"><span class="legend-swatch" data-status="3" aria-hidden="true"></span>ちょっと出た</button>
+      <section class="calendar" id="calendar" aria-labelledby="calendar-heading">
+        <div class="calendar-head">
+          <h2 id="calendar-heading">カレンダー</h2>
+          <button type="button" class="btn-secondary" id="btn-bulk">まとめて記録</button>
         </div>
-        <p class="bulk-help">日付をタップするか、指でなぞって記録します。同じ記録の日をもう一度タップすると消えます。</p>
-      </div>
-      <div class="calendar-nav">
-        <button type="button" class="calendar-nav-btn" data-cal-nav="prev" aria-label="前の月">‹</button>
-        <p class="calendar-heading-text" aria-live="polite">
-          <span class="calendar-title" data-testid="calendar-title"></span>
-          <span class="calendar-summary" data-testid="calendar-summary"></span>
-        </p>
-        <button type="button" class="calendar-nav-btn" data-cal-nav="next" aria-label="次の月">›</button>
-      </div>
-      <div class="calendar-weekdays" data-testid="calendar-weekdays" aria-hidden="true">
-        <span>日</span><span>月</span><span>火</span><span>水</span><span>木</span><span>金</span><span>土</span>
-      </div>
-      <div class="calendar-grid" role="group"></div>
-      <div class="bulk-actions" id="bulk-actions" hidden>
-        <button type="button" class="btn-link" id="btn-bulk-revert">変更を取り消す</button>
-        <button type="button" class="btn-done-small" id="btn-bulk-done">完了</button>
-      </div>
-      <p class="visually-hidden" id="bulk-status" role="status" aria-live="polite"></p>
-    </section>
+        <div class="bulk-bar" id="bulk-bar" hidden>
+          <div class="bulk-brushes" role="group" aria-label="記録する内容">
+            <button type="button" class="bulk-brush" data-brush="1" aria-pressed="true"><span class="legend-swatch" data-status="1" aria-hidden="true"></span>出た</button>
+            <button type="button" class="bulk-brush" data-brush="3" aria-pressed="false"><span class="legend-swatch" data-status="3" aria-hidden="true"></span>ちょっと出た</button>
+          </div>
+          <p class="bulk-help">日付をタップするか、指でなぞって記録します。同じ記録の日をもう一度タップすると消えます。</p>
+        </div>
+        <div class="calendar-nav">
+          <button type="button" class="calendar-nav-btn" data-cal-nav="prev" aria-label="前の月">‹</button>
+          <p class="calendar-heading-text" aria-live="polite">
+            <span class="calendar-title" data-testid="calendar-title"></span>
+            <span class="calendar-summary" data-testid="calendar-summary"></span>
+          </p>
+          <button type="button" class="calendar-nav-btn" data-cal-nav="next" aria-label="次の月">›</button>
+        </div>
+        <div class="calendar-weekdays" data-testid="calendar-weekdays" aria-hidden="true">
+          <span>日</span><span>月</span><span>火</span><span>水</span><span>木</span><span>金</span><span>土</span>
+        </div>
+        <div class="calendar-grid" role="group"></div>
+        <div class="bulk-actions" id="bulk-actions" hidden>
+          <button type="button" class="btn-link" id="btn-bulk-revert">変更を取り消す</button>
+          <button type="button" class="btn-done-small" id="btn-bulk-done">完了</button>
+        </div>
+        <p class="visually-hidden" id="bulk-status" role="status" aria-live="polite"></p>
+      </section>
 
-    <section class="history" aria-labelledby="history-heading">
-      <h2 id="history-heading">これまでの記録</h2>
-      <p class="hint">「出た」「ちょっと出た」日を色で表示します（見るだけです）。修正や取り消しは上の「カレンダー」から行えます。</p>
-      <div class="heatmap-scroll" id="heatmap"></div>
-      <ul class="legend" aria-label="凡例">
-        <li><span class="legend-swatch" data-status="1" aria-hidden="true"></span>出た</li>
-        <li><span class="legend-swatch" data-status="3" aria-hidden="true"></span>ちょっと出た</li>
-        <li><span class="legend-swatch" data-status="0" aria-hidden="true"></span>未記録</li>
-      </ul>
-    </section>
+      <section class="history" id="history" aria-labelledby="history-heading">
+        <h2 id="history-heading">これまでの記録</h2>
+        <p class="hint">「出た」「ちょっと出た」日を色で表示します（見るだけです）。修正や取り消しは「カレンダー」から行えます。</p>
+        <div class="heatmap-scroll" id="heatmap"></div>
+        <ul class="legend" aria-label="凡例">
+          <li><span class="legend-swatch" data-status="1" aria-hidden="true"></span>出た</li>
+          <li><span class="legend-swatch" data-status="3" aria-hidden="true"></span>ちょっと出た</li>
+          <li><span class="legend-swatch" data-status="0" aria-hidden="true"></span>未記録</li>
+        </ul>
+      </section>
+    </div>
 
     <section class="backup" id="backup" aria-labelledby="backup-heading">
       <details class="disclosure backup-panel" id="backup-panel">
