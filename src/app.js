@@ -104,6 +104,11 @@ function openDayDialog(date, view) {
 const heatmap = createHeatmapView($('heatmap'));
 // まとめて記録: 1日ごとにすぐ保存し、ひと筆が終わったら画面全体を描き直す
 let bulkSnapshot = null;
+// カレンダーの各マスに出すアイコンは、ホーム画面のキャラクターと同じ絵を使う
+const calendarIcons = {
+  [STATUS.DONE]: $('btn-done').querySelector('svg'),
+  [STATUS.LITTLE]: $('btn-little').querySelector('svg'),
+};
 const calendar = createCalendarView($('calendar'), (date) => openDayDialog(date, calendar), {
   start() {
     bulkSnapshot = state.records;
@@ -119,7 +124,7 @@ const calendar = createCalendarView($('calendar'), (date) => openDayDialog(date,
     if (bulkSnapshot) persist({ ...state, records: bulkSnapshot });
     render();
   },
-});
+}, calendarIcons);
 
 // 記録してから閉じるまでの時間（演出を見せる。reduced-motion では短く）
 const DAY_CLOSE_DELAY_MS = 1300;

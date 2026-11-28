@@ -897,6 +897,51 @@ details[open] > summary > .chevron {
   font-variant-numeric: tabular-nums;
 }
 
+/* マスの中: 日付の数字と、記録した日はその下にキャラクター（マスの外枠・大きさは変えない） */
+.cal-day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+
+.cal-num {
+  line-height: 1;
+}
+
+.cal-day .cal-icon {
+  width: auto;
+  height: 1.25rem;
+  filter: none;
+  transform: none;
+  transition: none;
+  pointer-events: none; /* なぞる・タップの判定はマス（ボタン）で受ける */
+}
+
+.cal-day .cal-icon.poo-mini {
+  height: 0.95rem;
+}
+
+/* アイコンの体はマスの文字色、顔はマスの背景色で抜く（ライト・ダークどちらでも埋もれない） */
+.cal-icon .poo-body {
+  fill: currentColor;
+}
+
+.cal-icon .poo-shine {
+  display: none;
+}
+
+.cal-day[data-status="1"] .poo-face {
+  fill: var(--accent);
+  stroke: var(--accent);
+}
+
+.cal-day[data-status="3"] .poo-face {
+  fill: var(--little-bg);
+  stroke: var(--little-bg);
+}
+
 /* 「出た」の日: 濃い塗りつぶし */
 .cal-day[data-status="1"] {
   background: var(--accent);

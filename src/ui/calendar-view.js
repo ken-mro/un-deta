@@ -21,8 +21,9 @@ const dayLabel = (date, status, isToday) => `${formatDateJa(date)} ${STATUS_LABE
  * @param {HTMLElement} root カレンダー節の要素
  * @param {(date: string) => void} onSelect 日付が選ばれたとき
  * @param {BulkHandlers} bulk まとめて記録
+ * @param {Record<number, SVGElement>} [icons] 状態ごとのアイコンの見本（各マスに複製する。ない状態はアイコンなし）
  */
-export function createCalendarView(root, onSelect, bulk) {
+export function createCalendarView(root, onSelect, bulk, icons = {}) {
   const title = root.querySelector('[data-testid="calendar-title"]');
   const summary = root.querySelector('[data-testid="calendar-summary"]');
   const grid = root.querySelector('.calendar-grid');
@@ -144,8 +145,7 @@ export function createCalendarView(root, onSelect, bulk) {
     stroke.last = date;
     if (!bulk.paint(date, stroke.target)) return;
     stroke.dates.push(date);
-    btn.dataset.status = String(stroke.target);
-    btn.setAttribute('aria-label', dayLabel(date, stroke.target, date === last.todayKey));
+    fillCell(btn, date, stroke.target, date === last.todayKey);
     btn.classList.remove('is-painted');
     void btn.offsetWidth; // 続けて塗っても動きを最初から
     btn.classList.add('is-painted');
@@ -187,6 +187,18 @@ export function createCalendarView(root, onSelect, bulk) {
     window.addEventListener('pointercancel', onUp);
   });
 
+  /** マスの中身（日付の数字・状態のアイコン・読み上げ）を状態に合わせる。外枠の大きさは変えない */
+  function fillCell(btn, date, status, isToday) {
+    btn.dataset.status = String(status);
+    btn.setAttribute('aria-label', dayLabel(date, status, isToday));
+    const num = document.createElement('span');
+    num.className = 'cal-num';
+    num.textContent = String(Number(date.slice(8)));
+    const icon = icons[status]?.cloneNode(true);
+    icon?.classList.add('cal-icon');
+    btn.replaceChildren(...(icon ? [num, icon] : [num]));
+  }
+
   function render(records, todayKey) {
     last = { records, todayKey };
     const key = monthKey ?? monthOf(todayKey);
@@ -207,9 +219,7 @@ export function createCalendarView(root, onSelect, bulk) {
       btn.type = 'button';
       btn.className = 'cal-day';
       btn.dataset.calDate = c.date;
-      btn.dataset.status = String(c.status);
-      btn.textContent = String(c.day);
-      btn.setAttribute('aria-label', dayLabel(c.date, c.status, c.isToday));
+      fillCell(btn, c.date, c.status, c.isToday);
       if (c.isToday) btn.setAttribute('aria-current', 'date');
       if (c.isFuture) btn.disabled = true;
       btn.tabIndex = c.date === focusDate ? 0 : -1;
