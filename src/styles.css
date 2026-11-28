@@ -897,8 +897,9 @@ details[open] > summary > .chevron {
   font-variant-numeric: tabular-nums;
   /* 中身: 上に日付の数字、下にキャラクターの段（マスの外枠・大きさは変えない）。
      キャラクターの段は未記録の日も同じ高さを取り、数字の位置をどのマスでもそろえる */
+  --cal-icon-size: 1.25rem;
   display: grid;
-  grid-template-rows: auto 1.25rem;
+  grid-template-rows: auto var(--cal-icon-size);
   justify-items: center;
   align-items: center;
   align-content: center;
@@ -910,9 +911,8 @@ details[open] > summary > .chevron {
 }
 
 .cal-day .cal-icon {
-  grid-row: 2;
   width: auto;
-  height: 1.25rem;
+  height: var(--cal-icon-size);
   pointer-events: none; /* なぞる・タップの判定はマス（ボタン）で受ける */
 }
 

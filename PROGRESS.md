@@ -292,3 +292,4 @@
 
 ### カレンダーの日付の数字の位置をそろえる
 - やったこと: `.cal-day` を grid（上に数字、下に 1.25rem のキャラクター段）にし、未記録の日も同じ段の高さを取るので、どのマスでも数字の位置が同じになった。マスの大きさは変えていない。数字の位置がそろうことのテストを calendar-icon.spec.js に追加。sw.js VERSION 18。verify PASS。
+- 整理: キャラクターの段の高さを `--cal-icon-size` にまとめ、不要な `grid-row: 2` を削除。sw.js VERSION 19。verify PASS。

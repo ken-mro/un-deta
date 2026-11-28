@@ -1,6 +1,6 @@
 // service worker: 全アセットをプリキャッシュし、オフラインで動かす。外部オリジンへのリクエストは扱わない。
 // アセットを更新したら VERSION を上げること（古いキャッシュは activate 時に削除される）。
-const VERSION = '18';
+const VERSION = '19';
 const CACHE = `un-deta-${VERSION}`;
 
 const PRECACHE = [
