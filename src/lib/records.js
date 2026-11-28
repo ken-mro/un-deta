@@ -9,6 +9,9 @@ export const isValidStatus = (s) => s === STATUS.NONE || s === STATUS.DONE || s 
 /** 記録として扱う値（「出た」「ちょっと出た」） */
 export const isRecorded = (s) => s === STATUS.DONE || s === STATUS.LITTLE;
 
+/** 画面・読み上げで使う状態名 */
+export const STATUS_LABEL = Object.freeze({ [STATUS.NONE]: '未記録', [STATUS.DONE]: '出た', [STATUS.LITTLE]: 'ちょっと出た' });
+
 function assertKey(key) {
   if (!isValidDateKey(key)) throw new RangeError(`不正な日付キーです: ${String(key)}`);
 }
@@ -24,6 +27,7 @@ export function setStatus(records, key, status) {
   assertKey(key);
   if (!isValidStatus(status)) throw new RangeError(`不正な状態値です: ${String(status)}`);
   if (status === STATUS.NONE) return clearStatus(records, key);
+  if (records[key] === status) return records; // 変化なしなら同じオブジェクトを返す（clearStatus と同じ）
   return Object.freeze({ ...records, [key]: status });
 }
 

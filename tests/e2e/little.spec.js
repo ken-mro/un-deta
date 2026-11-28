@@ -1,6 +1,6 @@
 // 「ちょっと出た」の記録（ホーム）
 import { test, expect } from '@playwright/test';
-import { seed, fixToday, readSaved, openBackup } from './helpers.js';
+import { seed, fixToday, readSaved, openBackup, calendar, day } from './helpers.js';
 
 test.beforeEach(async ({ page }) => fixToday(page)); // 今日 = 2024-03-10
 
@@ -56,8 +56,6 @@ test('「出た」が大きく、「ちょっと出た」は小さめ', async ({
 });
 
 test.describe('カレンダー・ヒートマップ・修正ダイアログ', () => {
-  const day = (page, date) => page.locator(`[data-cal-date="${date}"]`);
-  const calendar = (page) => page.getByRole('region', { name: 'カレンダー' });
   const heatmap = (page) => page.getByRole('region', { name: 'これまでの記録' });
 
   test('カレンダーで「ちょっと出た」を区別して表示し、見出しに日数を出す', async ({ page }) => {

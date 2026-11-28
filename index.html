@@ -31,7 +31,7 @@
     <section class="install-banner" id="install-banner" aria-labelledby="install-heading" hidden>
       <h2 id="install-heading">ホーム画面に追加してください</h2>
       <p><strong>このままだと記録が消える可能性があります。</strong>ブラウザは、しばらく開かなかったサイトのデータを自動で削除することがあります。ホーム画面に追加して、そこから開いて使ってください。</p>
-      <details class="install-guide" data-testid="install-guide" data-os="other">
+      <details class="disclosure install-guide" data-testid="install-guide" data-os="other">
         <summary><span class="chevron" aria-hidden="true"></span>追加のしかた</summary>
         <ol data-guide-os="ios" hidden>
           <li>このページを <strong>Safari</strong> で開きます（ほかのアプリの中のブラウザでは追加できないことがあります）。</li>
@@ -153,7 +153,7 @@
     </section>
 
     <section class="backup" id="backup" aria-labelledby="backup-heading">
-      <details class="backup-panel" id="backup-panel">
+      <details class="disclosure backup-panel" id="backup-panel">
           <summary><span class="chevron" aria-hidden="true"></span><span class="backup-summary-text"><h2 id="backup-heading">バックアップ</h2><span class="summary-sub">機種変更や、もしものときに</span></span></summary>
         <p class="hint">記録を短い文字列にして保存できます。機種変更や、もしものときに使います。</p>
 
@@ -164,7 +164,7 @@
           <button type="button" class="btn-secondary" id="btn-copy">コピー</button>
           <span class="muted" id="last-backup"></span>
         </div>
-        <details class="qr-details">
+        <details class="disclosure qr-details">
           <summary><span class="chevron" aria-hidden="true"></span>QRコードで表示</summary>
           <div class="qr-box" id="qr-box"></div>
           <p class="hint" data-testid="qr-note">別の端末のカメラで読み取ると、同じ文字列を取り出せます。取り出した文字列は、その端末の<strong>このアプリの中</strong>で「読み込む」に貼り付けてください（QR を開いただけでは記録は移りません）。</p>
@@ -179,7 +179,7 @@
         <p class="form-error" id="import-error" role="alert"></p>
         <p class="form-status" id="backup-status" role="status" aria-live="polite"></p>
 
-        <details class="device-change">
+        <details class="disclosure device-change">
           <summary><span class="chevron" aria-hidden="true"></span>機種変更するときは</summary>
           <ol data-testid="device-change-steps">
             <li><strong>今の端末</strong>で、このアプリを開いて「書き出す」の<strong>「コピー」</strong>を押し、文字列をメモやメールなどに保存します（QR コードを表示しておく方法もあります）。</li>
@@ -231,43 +231,12 @@
   <dialog class="day-dialog" id="day-dialog" aria-labelledby="day-dialog-title">
     <h2 id="day-dialog-title" class="day-dialog-title">日付の記録を修正</h2>
     <p class="day-dialog-current" id="day-dialog-current"></p>
+    <!-- キャラクターの絵と演出はホーム画面のものを起動時に複製する（src/app.js） -->
     <div class="day-dialog-record">
-      <div class="celebration" data-testid="day-celebration" aria-hidden="true" hidden>
-        <span class="celebration-text"></span>
-        <span class="sparkle"></span><span class="sparkle"></span><span class="sparkle"></span><span class="sparkle"></span><span class="sparkle"></span><span class="sparkle"></span>
-      </div>
       <button type="button" class="btn-done btn-done-dialog" data-set="1" aria-pressed="false">
-        <svg class="poo" viewBox="112 76 288 334" aria-hidden="true" focusable="false">
-            <g class="poo-body">
-              <rect x="128" y="300" width="256" height="96" rx="48"/>
-              <rect x="164" y="222" width="184" height="90" rx="45"/>
-              <rect x="200" y="156" width="112" height="76" rx="38"/>
-              <path d="M212 180Q220 120 262 92Q252 118 270 132Q300 150 300 180Z"/>
-            </g>
-            <g class="poo-shine">
-              <rect x="150" y="314" width="70" height="14" rx="7"/>
-              <rect x="184" y="236" width="50" height="12" rx="6"/>
-              <rect x="218" y="170" width="30" height="10" rx="5"/>
-            </g>
-            <g class="poo-face">
-              <circle cx="218" cy="334" r="13"/>
-              <circle cx="294" cy="334" r="13"/>
-              <path d="M232 362q24 20 48 0" fill="none" stroke-width="10" stroke-linecap="round"/>
-            </g>
-          </svg>
         <span class="btn-label">出た</span>
       </button>
       <button type="button" class="btn-little" data-set="3" aria-pressed="false">
-        <svg class="poo poo-mini" viewBox="0 2 64 50" aria-hidden="true" focusable="false">
-            <g class="poo-body">
-              <rect x="6" y="22" width="52" height="26" rx="13"/>
-              <path d="M19 30Q21 18 33 9Q31 16 36 19Q44 23 45 30Z"/>
-            </g>
-            <g class="poo-face">
-              <circle cx="24" cy="34" r="3"/>
-              <circle cx="40" cy="34" r="3"/>
-            </g>
-          </svg>
         <span class="btn-label">ちょっと出た</span>
       </button>
     </div>

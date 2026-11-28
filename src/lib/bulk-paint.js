@@ -1,6 +1,6 @@
 // まとめて記録（カレンダーをタップ・なぞって一気に記録する）の判定ロジック（純粋関数）
 import { isValidDateKey } from './date.js';
-import { STATUS, getStatus, setStatus } from './records.js';
+import { STATUS, setStatus } from './records.js';
 
 /**
  * ひと筆（タップ、またはなぞり始めから指を離すまで）で付ける状態を決める。
@@ -18,6 +18,5 @@ export function strokeTarget(firstStatus, brush) {
  */
 export function paintDay(records, date, target, todayKey) {
   if (!isValidDateKey(date) || date > todayKey) return records;
-  if (getStatus(records, date) === target) return records;
   return setStatus(records, date, target);
 }

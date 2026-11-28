@@ -279,3 +279,8 @@
 - 経緯: ユーザー要望「1つ1つ登録するのが面倒な方に、出た／ちょっと出たを選んで、日をタップまたはなぞるだけで一気に登録。もう一回タップで未登録」
 - やったこと: `tests/unit/bulk-paint.test.js`・`tests/e2e/bulk.spec.js` を先に書き Red → `src/lib/bulk-paint.js`（ひと筆の最初の日で「付ける／消す」を決める `strokeTarget`、未来の日を変えない `paintDay`）。カレンダー見出しの横に「まとめて記録」ボタン、押すと記録する内容（出た／ちょっと出た）の選択と説明、日付はタップ・なぞり（pointer イベント＋elementFromPoint）で即保存、キーボードは Enter / Space で1日ずつ、結果は role=status で読み上げ。「変更を取り消す」で開始前の記録に戻し、「完了」で通常（タップで修正ダイアログ）に戻る。まとめて記録中はカレンダー上で touch-action:none（なぞってもスクロールしない）。sw.js にファイル追加・VERSION=14
 - 申し送り: 実機（iPhone / Android）の指でのなぞりは未確認（E2E はマウスのドラッグで検証）。SPEC には未記載なので必要なら人間が追記
+
+### コード整理（まとめて記録のあと）
+- やったこと: 状態名 `STATUS_LABEL` を records.js に一本化／`setStatus` を変化なしなら同じオブジェクトを返す形にし `paintDay` を簡素化／修正ダイアログのキャラクター SVG と演出はホームのものを起動時に複製（HTML の二重管理をやめた）／ダイアログの状態表示を `showDayStatus` に共通化、記録時の即時再描画をやめ閉じるときの1回に／開閉項目の CSS を `.disclosure` クラスにまとめ、`.bulk-bar` も同じ箱の規則へ／E2E の `calendar`・`day` ロケータを helpers.js に共通化。sw.js VERSION 15。
+- 判断: なぞり中の1日ごとの保存は、途中で閉じても失わないための意図的な設計なので残した。
+- 申し送り: verify PASS（E2E 266）。

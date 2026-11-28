@@ -1,12 +1,11 @@
 // 月のカレンダーの描画（日付タップで修正ダイアログを開く。「まとめて記録」中はタップ・なぞりで直接記録する）
 import { buildMonthCalendar, addMonths, monthOf } from '../lib/month-calendar.js';
 import { addDays, isValidDateKey } from '../lib/date.js';
-import { STATUS } from '../lib/records.js';
+import { STATUS, STATUS_LABEL } from '../lib/records.js';
 import { strokeTarget } from '../lib/bulk-paint.js';
 import { formatDateJa } from './heatmap-view.js';
 
 const WEEKDAYS = ['日', '月', '火', '水', '木', '金', '土'];
-const STATUS_LABEL = { [STATUS.NONE]: '未記録', [STATUS.DONE]: '出た', [STATUS.LITTLE]: 'ちょっと出た' };
 
 /**
  * @typedef {object} BulkHandlers まとめて記録の保存先（app.js が持つ状態を変える）
@@ -182,7 +181,6 @@ export function createCalendarView(root, onSelect, bulk) {
     const btn = e.target.closest('[data-cal-date]');
     if (!btn || btn.disabled) return;
     e.preventDefault(); // 文字の選択・長押しメニューを出さない
-    stroke = null;
     paintStroke(btn);
     window.addEventListener('pointermove', onMove);
     window.addEventListener('pointerup', onUp);

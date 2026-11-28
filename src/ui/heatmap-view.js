@@ -1,10 +1,9 @@
 // ヒートマップ（直近1年）の描画。見るだけの表示で、押しても反応しない（修正は月のカレンダーから）。
 import { parseDateKey } from '../lib/date.js';
 import { buildHeatmap } from '../lib/heatmap.js';
-import { STATUS } from '../lib/records.js';
+import { STATUS, STATUS_LABEL } from '../lib/records.js';
 
 const WEEKDAYS = ['日', '月', '火', '水', '木', '金', '土'];
-const STATUS_LABEL = { [STATUS.NONE]: '未記録', [STATUS.DONE]: '出た', [STATUS.LITTLE]: 'ちょっと出た' };
 
 export function formatDateJa(key) {
   const d = parseDateKey(key);

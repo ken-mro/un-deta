@@ -1,10 +1,8 @@
 // カレンダーから日付を指定して記録するときも、今日の記録と同じ手ざわりにする
 import { test, expect } from '@playwright/test';
-import { seed, fixToday, readSaved } from './helpers.js';
+import { seed, fixToday, readSaved, day } from './helpers.js';
 
 test.beforeEach(async ({ page }) => fixToday(page)); // 今日 = 2024-03-10
-
-const day = (page, date) => page.locator(`[data-cal-date="${date}"]`);
 
 test('ダイアログの「出た」「ちょっと出た」は、ホームと同じキャラクターのボタン', async ({ page }) => {
   await page.goto('/');

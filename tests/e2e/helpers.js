@@ -18,6 +18,10 @@ export const fixToday = (page, date = new Date(2024, 2, 10, 10, 0, 0)) => page.c
 
 export const readSaved = (page) => page.evaluate((key) => JSON.parse(localStorage.getItem(key) ?? 'null'), STORAGE_KEY);
 
+/** カレンダー欄と、その中の日付セル */
+export const calendar = (page) => page.getByRole('region', { name: 'カレンダー' });
+export const day = (page, date) => page.locator(`[data-cal-date="${date}"]`);
+
 /** 最初は閉じているバックアップ欄を開く（すでに開いていればそのまま） */
 export async function openBackup(page) {
   const panel = page.locator('.backup-panel');

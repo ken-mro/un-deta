@@ -1,6 +1,6 @@
 // アプリのエントリポイント（DOM 操作）。ロジックは src/lib/ の純粋関数に置く。
 import { toDateKey } from './lib/date.js';
-import { STATUS, getStatus, setStatus, clearStatus } from './lib/records.js';
+import { STATUS, STATUS_LABEL, getStatus, setStatus, clearStatus } from './lib/records.js';
 import { daysSinceLastDone } from './lib/since.js';
 import { createHeatmapView, formatDateJa } from './ui/heatmap-view.js';
 import { detectPlatform } from './lib/platform.js';
@@ -22,6 +22,7 @@ const storage = createStorage(getLocalStorage(window));
 let state = storage.load();
 
 const todayKey = () => toDateKey(new Date());
+const prefersReducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 function formatToday(date) {
   return `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日（${WEEKDAYS[date.getDay()]}）`;
@@ -60,7 +61,7 @@ function render() {
 $('btn-reminder-go').addEventListener('click', () => {
   $('backup-panel').open = true;
   const copy = $('btn-copy');
-  copy.scrollIntoView({ block: 'center', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+  copy.scrollIntoView({ block: 'center', behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
   copy.focus({ preventScroll: true });
 });
 $('btn-reminder-later').addEventListener('click', () => {
@@ -69,21 +70,33 @@ $('btn-reminder-later').addEventListener('click', () => {
 });
 
 // ---- ヒートマップと日付ごとの修正 ----
-const STATUS_NAME = { [STATUS.NONE]: '未記録', [STATUS.DONE]: '出た', [STATUS.LITTLE]: 'ちょっと出た' };
 const dayDialog = $('day-dialog');
+// キャラクターの絵と演出はホーム画面と同じものを使う（複製して二重管理を避ける）
+{
+  const record = dayDialog.querySelector('.day-dialog-record');
+  const fx = document.querySelector('[data-testid="celebration"]').cloneNode(true);
+  fx.dataset.testid = 'day-celebration';
+  record.prepend(fx);
+  record.querySelector('[data-set="1"]').prepend($('btn-done').querySelector('svg').cloneNode(true));
+  record.querySelector('[data-set="3"]').prepend($('btn-little').querySelector('svg').cloneNode(true));
+}
 let editingDate = null;
 let returnFocus = null; // 閉じたあとにフォーカスを戻すビュー
+
+/** ダイアログの「いまの記録」と、キャラクターボタンの押された状態をそろえる */
+function showDayStatus(status, locked) {
+  $('day-dialog-current').textContent = `いまの記録: ${STATUS_LABEL[status]}`;
+  dayDialog.querySelectorAll('[data-set][aria-pressed]').forEach((b) => {
+    b.setAttribute('aria-pressed', String(Number(b.dataset.set) === status));
+    b.disabled = locked;
+  });
+}
 
 function openDayDialog(date, view) {
   editingDate = date;
   returnFocus = view;
   $('day-dialog-title').textContent = formatDateJa(date);
-  const current = getStatus(state.records, date);
-  $('day-dialog-current').textContent = `いまの記録: ${STATUS_NAME[current]}`;
-  dayDialog.querySelectorAll('[data-set][aria-pressed]').forEach((b) => {
-    b.setAttribute('aria-pressed', String(Number(b.dataset.set) === current));
-    b.disabled = false;
-  });
+  showDayStatus(getStatus(state.records, date), false);
   dayDialog.querySelector('[data-testid="day-celebration"]').hidden = true;
   dayDialog.showModal();
 }
@@ -121,23 +134,16 @@ dayDialog.addEventListener('click', (e) => {
     return;
   }
   const status = Number(btn.dataset.set);
+  persist({ ...state, records: setStatus(state.records, editingDate, status) });
   if (status === STATUS.NONE) {
-    persist({ ...state, records: clearStatus(state.records, editingDate) });
     dayDialog.close();
     return;
   }
-  // 今日の記録と同じように: すぐ保存して、押した感触と「すっきり」の演出を見せてから閉じる
-  persist({ ...state, records: setStatus(state.records, editingDate, status) });
-  render();
-  $('day-dialog-current').textContent = `いまの記録: ${STATUS_NAME[status]}`;
-  dayDialog.querySelectorAll('[data-set][aria-pressed]').forEach((b) => {
-    b.setAttribute('aria-pressed', String(Number(b.dataset.set) === status));
-    b.disabled = true; // 演出中の二度押しを防ぐ
-  });
+  // 今日の記録と同じように: 押した感触と「すっきり」の演出を見せてから閉じる（閉じるときに描き直す）
+  showDayStatus(status, true); // 演出中の二度押しを防ぐ
   celebrate(dayDialog.querySelector('[data-testid="day-celebration"]'), status);
   clearTimeout(dayCloseTimer);
-  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  dayCloseTimer = setTimeout(() => dayDialog.close(), reduced ? DAY_CLOSE_DELAY_REDUCED_MS : DAY_CLOSE_DELAY_MS);
+  dayCloseTimer = setTimeout(() => dayDialog.close(), prefersReducedMotion() ? DAY_CLOSE_DELAY_REDUCED_MS : DAY_CLOSE_DELAY_MS);
 });
 
 dayDialog.addEventListener('close', () => {

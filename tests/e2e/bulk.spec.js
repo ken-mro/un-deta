@@ -1,11 +1,9 @@
 // まとめて記録: 出た／ちょっと出たを選んで、カレンダーの日をタップ・なぞって一気に記録する
 import { test, expect } from '@playwright/test';
-import { seed, fixToday, readSaved } from './helpers.js';
+import { seed, fixToday, readSaved, calendar, day } from './helpers.js';
 
 test.beforeEach(async ({ page }) => fixToday(page)); // 今日 = 2024-03-10
 
-const calendar = (page) => page.getByRole('region', { name: 'カレンダー' });
-const day = (page, date) => page.locator(`[data-cal-date="${date}"]`);
 const startBulk = (page) => calendar(page).getByRole('button', { name: 'まとめて記録' }).click();
 const brushes = (page) => calendar(page).getByRole('group', { name: '記録する内容' });
 

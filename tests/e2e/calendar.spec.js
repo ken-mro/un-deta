@@ -1,11 +1,8 @@
 // 月のカレンダー表示（日付タップで修正）
 import { test, expect } from '@playwright/test';
-import { seed, fixToday, readSaved } from './helpers.js';
+import { seed, fixToday, readSaved, calendar, day } from './helpers.js';
 
 test.beforeEach(async ({ page }) => fixToday(page)); // 今日 = 2024-03-10（日）
-
-const calendar = (page) => page.getByRole('region', { name: 'カレンダー' });
-const day = (page, date) => page.locator(`[data-cal-date="${date}"]`);
 
 test('今月のカレンダーと「出た」日数が表示される', async ({ page }) => {
   await seed(page, { records: { '2024-03-01': 1, '2024-03-09': 1, '2024-02-29': 1 } });

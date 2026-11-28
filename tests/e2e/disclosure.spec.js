@@ -1,14 +1,14 @@
 // 開閉できる項目（<details>）が「押せる」と分かる見た目と、バックアップ欄の初期状態
 import { test, expect } from '@playwright/test';
-import { seed, fixToday } from './helpers.js';
+import { seed, fixToday, openBackup } from './helpers.js';
 
 test.beforeEach(async ({ page }) => fixToday(page));
 
-const SUMMARIES = ['.install-guide summary', '.backup-panel > summary', '.qr-details summary', '.device-change summary'];
+const SUMMARIES = ['.install-guide > summary', '.backup-panel > summary', '.qr-details > summary', '.device-change > summary'];
 
 test('開閉できる項目は「機種変更するときは」と同じ色付きの箱で、開閉の矢印がある', async ({ page }) => {
   await page.goto('/');
-  await page.locator('.backup-panel > summary').click();
+  await openBackup(page);
   for (const sel of SUMMARIES) {
     const summary = page.locator(sel);
     const look = await summary.evaluate((el) => {

@@ -402,7 +402,6 @@ button {
   background: var(--cell-little);
 }
 
-
 .heatmap-cell.is-today {
   outline: 2px solid var(--text);
   outline-offset: 1px;
@@ -519,17 +518,14 @@ button {
   margin-top: 0.5rem;
 }
 
-
 .install-guide ol {
   margin: 0.25rem 0 0;
   padding-left: 1.4rem;
 }
 
 /* ---- 開閉できる項目（details / summary）: 色付きの箱に見出しと中身を入れる（「機種変更するときは」の形にそろえる） ---- */
-.install-guide,
-.backup-panel,
-.qr-details,
-.device-change {
+.disclosure,
+.bulk-bar {
   padding: 0.75rem 1rem;
   border-radius: var(--radius);
   background: var(--secondary);
@@ -537,16 +533,12 @@ button {
 }
 
 /* バックアップ欄の中の箱は、外の箱と区別できる色にする */
-.backup-panel .qr-details,
-.backup-panel .device-change {
+.disclosure .disclosure {
   background: var(--surface);
   color: var(--text);
 }
 
-.install-guide > summary,
-.backup-panel > summary,
-.qr-details > summary,
-.device-change > summary {
+.disclosure > summary {
   display: flex;
   align-items: center;
   gap: 0.6rem;
@@ -557,17 +549,11 @@ button {
   -webkit-tap-highlight-color: transparent;
 }
 
-.install-guide > summary::-webkit-details-marker,
-.backup-panel > summary::-webkit-details-marker,
-.qr-details > summary::-webkit-details-marker,
-.device-change > summary::-webkit-details-marker {
+.disclosure > summary::-webkit-details-marker {
   display: none;
 }
 
-.install-guide:has(> summary:active),
-.backup-panel:has(> summary:active),
-.qr-details:has(> summary:active),
-.device-change:has(> summary:active) {
+.disclosure:has(> summary:active) {
   filter: brightness(0.96);
 }
 
@@ -596,7 +582,6 @@ details[open] > summary > .chevron {
   font-size: 1.1rem;
   margin: 0;
 }
-
 
 .backup-summary-text {
   display: flex;
@@ -697,7 +682,6 @@ details[open] > summary > .chevron {
   margin-top: 0.75rem;
 }
 
-
 .qr-box {
   width: min(18rem, 100%);
   margin: 0.5rem auto;
@@ -715,7 +699,6 @@ details[open] > summary > .chevron {
 .device-change {
   margin-top: 1.5rem;
 }
-
 
 .device-change ol {
   margin: 0.25rem 0 0.75rem;
@@ -840,7 +823,7 @@ details[open] > summary > .chevron {
 
 .calendar h2 {
   font-size: 1.1rem;
-  margin: 0 0 0.5rem;
+  margin: 0;
 }
 
 .calendar-nav {
@@ -921,7 +904,6 @@ details[open] > summary > .chevron {
   font-weight: 700;
 }
 
-
 /* 「ちょっと出た」の日: 薄い塗り＋細い枠（色だけに頼らず区別） */
 .cal-day[data-status="3"] {
   background: var(--little-bg);
@@ -958,16 +940,8 @@ details[open] > summary > .chevron {
   margin-bottom: 0.5rem;
 }
 
-.calendar-head h2 {
-  margin: 0;
-}
-
 .bulk-bar {
   margin: 0 0 0.75rem;
-  padding: 0.75rem 1rem;
-  border-radius: var(--radius);
-  background: var(--secondary);
-  color: var(--secondary-text);
 }
 
 .bulk-brushes {
